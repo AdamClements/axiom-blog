@@ -53,9 +53,8 @@ body {
 
 .crt {
   position: relative;
-  width: 80ch;
+  width: min(960px, 90vw);
   aspect-ratio: 4 / 3;
-  max-height: 90vh;
   display: flex;
   flex-direction: column;
   background: var(--bg);
