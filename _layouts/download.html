@@ -63,10 +63,16 @@ layout: default
     render();
 
     setTimeout(function() {
-      setLine(8, ' CODE ACCEPTED.');
-      setLine(9, ' CONNECTING TO REPOSITORY...');
+      setLine(8, ' VALIDATING AGAINST REGISTRY...');
       render();
-      setTimeout(doDownload, 1200);
+      setTimeout(function() {
+        setLine(9, '');
+        setLine(10, ' CODE NOT FOUND IN REGISTRY.');
+        setLine(11, ' NO MANUALS HAVE BEEN DISTRIBUTED');
+        setLine(12, ' TO THIS SECTOR.');
+        render();
+        setTimeout(fail, 2000);
+      }, 2000);
     }, 1500);
   }
 
