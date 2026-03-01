@@ -9,11 +9,13 @@ title: Tabula Rasa
 
 ---
 
-A programming war game. No AI. No autocomplete. No copy-paste. Just you, a CRT terminal, and the Axiom Systems TR-16 Field Reference.
+This terminal is a public access node maintained by the Axiom Systems Field Communications Division. All field engineers with valid sector clearance are authorised to access archived bulletins and recovered documents.
 
-The EMP wiped everything — every compiler, every operating system, every neural network. What survived were the old machines: 16-bit processors with transistors fat enough to shrug off the pulse. Now you reprogram military drones from scratch, in assembly, through a terminal that doesn't even have cursor keys.
+The TR-16 processor programme is active. Hardware is in production. Field units are operational.
 
-Write firmware. Flash it to bots. Watch them fight. Iterate.
+If you are reading this, you survived. Report to your sector quartermaster for assignment and equipment requisition. Refer to the **Axiom Systems TR-16 Field Reference** for all hardware specifications, instruction set documentation, and device port maps.
+
+Do not attempt to operate TR-16 equipment without the manual. Do not trust digital copies.
 
 *Some assembly required.*
 

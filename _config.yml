@@ -3,8 +3,6 @@ description: "The machines survived. The software didn't."
 baseurl: ""
 url: "https://tabula-rasa.online"
 
-theme: minima
-
 author:
   name: Axiom Systems — Field Communications Division
 
@@ -14,7 +12,3 @@ defaults:
       type: "posts"
     values:
       layout: "post"
-
-plugins:
-  - jekyll-feed
-  - jekyll-seo-tag

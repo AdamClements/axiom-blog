@@ -1,0 +1,25 @@
+---
+layout: default
+---
+
+<div class="landing-content">
+  {{ content }}
+</div>
+
+<div class="board-header">Field Bulletins & Recovered Documents</div>
+
+<div class="bulletin-board">
+  {% assign sorted_posts = site.posts | sort: 'date' %}
+  {% for post in sorted_posts %}
+  <div class="bulletin">
+    <div class="bulletin-header">
+      <a href="{{ post.url | relative_url }}" class="bulletin-title">{{ post.title }}</a>
+      <span class="bulletin-date">{{ post.date | date: "%Y.%m.%d" }}</span>
+    </div>
+    {% if post.classification %}
+    <div class="bulletin-classification">{{ post.classification }}</div>
+    {% endif %}
+    <div class="bulletin-excerpt">{{ post.excerpt | strip_html | truncatewords: 30 }}</div>
+  </div>
+  {% endfor %}
+</div>

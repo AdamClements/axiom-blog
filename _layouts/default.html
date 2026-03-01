@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if page.title %}{{ page.title }} — {% endif %}{{ site.title }}</title>
+  <meta name="description" content="{{ site.description }}">
+  <link rel="stylesheet" href="{{ '/assets/css/crt.css' | relative_url }}">
+</head>
+<body>
+  <div class="crt">
+    <header class="site-header">
+      <a href="{{ '/' | relative_url }}" class="site-title">{{ site.title }}</a>
+      <div class="site-subtitle">Axiom Systems — Field Communications Division</div>
+    </header>
+
+    <main>
+      {{ content }}
+    </main>
+
+    <footer class="site-footer">
+      AXIOM SYSTEMS FIELD COMMUNICATIONS DIVISION — OPEN DISTRIBUTION<br>
+      REPORT HARDWARE FAULTS TO YOUR SECTOR QUARTERMASTER<span class="cursor"></span>
+    </footer>
+  </div>
+</body>
+</html>
