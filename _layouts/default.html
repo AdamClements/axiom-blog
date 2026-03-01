@@ -95,6 +95,19 @@ LANDSCAPE ORIENTATION</pre>
   }
 
   var MOBILE_BP = 1024;
+  var TARGET_COLS = 40;
+
+  // Measure VT323 ch/em ratio once
+  var probe = document.createElement('span');
+  probe.style.cssText = 'font:100px VT323;position:absolute;visibility:hidden';
+  probe.textContent = '0000000000';
+  document.body.appendChild(probe);
+  var chRatio = probe.getBoundingClientRect().width / 1000; // width per px of font-size
+  document.body.removeChild(probe);
+
+  function fontForCols(screenW, cols) {
+    return Math.max(8, Math.floor(screenW / (cols * chRatio)));
+  }
 
   function layoutScene() {
     var vw = window.innerWidth, vh = window.innerHeight;
@@ -104,7 +117,7 @@ LANDSCAPE ORIENTATION</pre>
       frame.style.display = 'none';
       housing.style.cssText = '';
       var screenW = vw * 0.9;
-      var fs = Math.max(12, Math.floor(screenW / 18));
+      var fs = fontForCols(screenW, TARGET_COLS);
       document.documentElement.style.setProperty('--term-font-size', fs + 'px');
       return;
     }
@@ -147,9 +160,8 @@ LANDSCAPE ORIENTATION</pre>
     housing.style.transformOrigin = '0 0';
     housing.style.transform = computeMatrix3d(boxW, boxH, rel.tl, rel.tr, rel.br, rel.bl);
 
-    // Scale font so ~40 chars fit the screen width
     var screenW = boxW * 0.9;
-    var fs = Math.max(8, Math.floor(screenW / 18));
+    var fs = fontForCols(screenW, TARGET_COLS);
     document.documentElement.style.setProperty('--term-font-size', fs + 'px');
   }
 
