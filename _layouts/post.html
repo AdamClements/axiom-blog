@@ -38,8 +38,8 @@ layout: default
     <div class="status-bar-inner">
       <span class="keys">
         <kbd>↑↓</kbd> SCROLL
-        {% if page.previous %}  <kbd>N</kbd> NEXT{% endif %}
         {% if page.next %}  <kbd>P</kbd> PREV{% endif %}
+        {% if page.previous %}  <kbd>N</kbd> NEXT{% endif %}
           <kbd>Q</kbd> BACK
       </span>
       <span>{{ post_index }}/{{ post_total }}<span class="cursor"></span></span>
@@ -101,6 +101,16 @@ layout: default
         break;
       case 'p':
       case 'P':
+        {% if page.next %}
+        window.location.href = '{{ page.next.url | relative_url }}';
+        {% endif %}
+        break;
+      case 'ArrowRight':
+        {% if page.previous %}
+        window.location.href = '{{ page.previous.url | relative_url }}';
+        {% endif %}
+        break;
+      case 'ArrowLeft':
         {% if page.next %}
         window.location.href = '{{ page.next.url | relative_url }}';
         {% endif %}
