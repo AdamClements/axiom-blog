@@ -25,14 +25,13 @@ layout: default
 
   pre.textContent =
     ' REQUEST OPERATOR\'S MANUAL\n' +
-    '────────────────────────────────────────\n' +
-    ' Print the requisition form and send\n' +
-    ' it with 20 credits to the address\n' +
-    ' on the form.\n' +
+    '────────────────────────────\n' +
+    ' Print the requisition form and\n' +
+    ' send it with 20 credits to the\n' +
+    ' address on the form.\n' +
     '\n' +
-    ' Allow 4-6 weeks. Physical copies only.\n' +
-    '\n' +
-    ' Press P to print form.';
+    ' Allow 4-6 weeks delivery.\n' +
+    ' Physical copies only.';
 
   function printForm() {
     window.open('{{ "/assets/requisition-form.pdf" | relative_url }}', '_blank');
