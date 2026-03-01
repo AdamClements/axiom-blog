@@ -363,7 +363,9 @@ body {
 
 .boot-log {
   color: var(--phosphor);
-  font-family: inherit;
+  font-family: 'VT323', 'Courier New', monospace;
+  font-size: 20px;
+  line-height: 1.5;
   white-space: pre-wrap;
   margin: 0;
 }
