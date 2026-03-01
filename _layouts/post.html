@@ -13,6 +13,16 @@ layout: default
   </div>
 
   <nav class="post-nav">
+    <div class="post-nav-links">
+      {% if page.next %}
+      <a href="{{ page.next.url | relative_url }}" class="nav-prev">&lt; {{ page.next.title }}</a>
+      {% else %}
+      <span class="nav-prev"></span>
+      {% endif %}
+      {% if page.previous %}
+      <a href="{{ page.previous.url | relative_url }}" class="nav-next">{{ page.previous.title }} &gt;</a>
+      {% endif %}
+    </div>
     <a href="{{ '/' | relative_url }}" class="back-link">RETURN TO BULLETIN BOARD</a>
   </nav>
 </article>
