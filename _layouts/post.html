@@ -11,6 +11,7 @@ layout: default
 {% endfor %}
 
 <div class="crt" id="terminal">
+  <div class="crt-glass"></div>
   <div class="screen">
     <div class="screen-content">
       <div class="terminal-header">
@@ -52,7 +53,7 @@ layout: default
   var body = document.getElementById('doc-body');
   var inner = document.getElementById('doc-inner');
   var scrollPos = 0;
-  var lineHeight = 33;
+  var lineHeight = 30;
 
   function getMaxScroll() {
     return Math.max(0, inner.scrollHeight - body.clientHeight);

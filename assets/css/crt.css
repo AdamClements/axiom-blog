@@ -7,9 +7,7 @@
   --phosphor-bright: #88ff88;
   --bg: #0a0a0a;
   --bg-highlight: #0f1f0f;
-  --scanline: rgba(0, 0, 0, 0.25);
   --amber: #ffb000;
-  --amber-dim: #996800;
 }
 
 * {
@@ -30,28 +28,55 @@ body {
   background: #000;
   color: var(--phosphor);
   font-family: 'VT323', 'Courier New', monospace;
-  font-size: 22px;
+  font-size: 20px;
   line-height: 1.5;
   user-select: none;
   -webkit-user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* CRT screen — fills viewport */
+/* === CRT MONITOR === */
+
+.crt-housing {
+  position: relative;
+  padding: 24px;
+  border-radius: 18px;
+  background: radial-gradient(ellipse at 30% 20%, #1a1a1a, #080808);
+  box-shadow:
+    0 0 0 2px #222,
+    0 0 0 4px #111,
+    0 8px 32px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
 .crt {
-  position: fixed;
-  top: 0;
-  left: 0;
+  position: relative;
+  width: 80ch;
+  height: 80vh;
+  max-height: 900px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Barrel distortion — matches in-game applyDistortion with CURVATURE 0.1 */
+.crt-warp {
+  position: relative;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--bg);
+  /* barrel distortion approximation via border-radius + overflow */
 }
 
 /* Scanlines */
 .crt::before {
   content: '';
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -60,33 +85,72 @@ body {
     to bottom,
     transparent 0px,
     transparent 3px,
-    var(--scanline) 3px,
-    var(--scanline) 4px
+    rgba(0, 0, 0, 0.2) 3px,
+    rgba(0, 0, 0, 0.2) 4px
   );
   pointer-events: none;
   z-index: 100;
+  border-radius: 8px;
 }
 
-/* Vignette */
+/* Vignette — stronger at edges to fake barrel distortion falloff */
 .crt::after {
   content: '';
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background: radial-gradient(
     ellipse at center,
-    transparent 55%,
-    rgba(0, 0, 0, 0.65) 100%
+    transparent 50%,
+    rgba(0, 0, 0, 0.75) 100%
   );
   pointer-events: none;
   z-index: 101;
+  border-radius: 8px;
+}
+
+/* Screen reflection / glass highlight */
+.crt-glass {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.03) 0%,
+    transparent 40%,
+    transparent 60%,
+    rgba(255, 255, 255, 0.01) 100%
+  );
+  pointer-events: none;
+  z-index: 102;
+  border-radius: 8px;
 }
 
 /* Phosphor glow */
 .crt * {
   text-shadow: 0 0 5px var(--phosphor-glow);
+}
+
+/* Ambient glow on housing from screen */
+.crt-housing::after {
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  height: 80%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(51, 255, 51, 0.04) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: -1;
+  border-radius: 8px;
 }
 
 /* Flicker */
@@ -118,9 +182,8 @@ body {
 
 .screen-content {
   height: 100%;
-  width: 80ch;
-  max-width: 100%;
-  padding: 1.5rem 0;
+  width: 100%;
+  padding: 1.2rem 1.5rem;
   overflow: hidden;
   position: relative;
 }
@@ -138,9 +201,8 @@ body {
 }
 
 .status-bar-inner {
-  width: 80ch;
-  max-width: 100%;
-  padding: 0.4rem 0;
+  width: 100%;
+  padding: 0.3rem 1.5rem;
   display: flex;
   justify-content: space-between;
 }
@@ -157,7 +219,7 @@ body {
 /* === HEADER BLOCK === */
 
 .terminal-header {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   color: var(--phosphor-bright);
   text-shadow: 0 0 10px var(--phosphor-glow), 0 0 20px var(--phosphor-glow);
   letter-spacing: 0.12em;
@@ -172,7 +234,7 @@ body {
 
 .terminal-divider {
   color: var(--phosphor-dim);
-  margin: 0.8rem 0;
+  margin: 0.6rem 0;
   overflow: hidden;
   white-space: nowrap;
 }
@@ -184,7 +246,7 @@ body {
 }
 
 .bulletin-item {
-  padding: 0.3rem 0;
+  padding: 0.2rem 0;
   display: flex;
   gap: 1rem;
 }
@@ -232,7 +294,7 @@ body {
 }
 
 .doc-header {
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
   flex-shrink: 0;
 }
 
@@ -313,15 +375,6 @@ body {
   margin: 1em 0;
 }
 
-/* === SCROLL INDICATOR === */
-
-.scroll-indicator {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  color: var(--phosphor-dim);
-}
-
 /* === CURSOR BLINK === */
 
 @keyframes blink {
@@ -346,7 +399,6 @@ a, a:visited, a:hover, a:active {
   pointer-events: none;
 }
 
-/* Re-enable pointer events only for keyboard-driven navigation */
 .bulletin-item { pointer-events: none; }
 
 /* === SELECTION === */
@@ -354,4 +406,18 @@ a, a:visited, a:hover, a:active {
 ::selection {
   background: var(--phosphor-dim);
   color: var(--bg);
+}
+
+/* === RESPONSIVE === */
+
+@media (max-width: 900px) {
+  .crt-housing {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .crt {
+    width: 95vw;
+    height: 90vh;
+  }
 }
