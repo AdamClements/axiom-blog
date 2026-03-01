@@ -2,6 +2,7 @@ title: Tabula Rasa
 description: "The machines survived. The software didn't."
 baseurl: ""
 url: "https://tabula-rasa.online"
+future: true
 
 author:
   name: Axiom Systems — Field Communications Division
