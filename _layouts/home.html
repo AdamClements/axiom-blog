@@ -33,8 +33,10 @@ layout: default
   </div>
 
   <div class="status-bar">
-    <span class="keys"><kbd>↑↓</kbd> SELECT   <kbd>ENTER</kbd> OPEN</span>
-    <span>{{ site.posts | size }} DOCUMENTS<span class="cursor"></span></span>
+    <div class="status-bar-inner">
+      <span class="keys"><kbd>↑↓</kbd> SELECT   <kbd>ENTER</kbd> OPEN</span>
+      <span>{{ site.posts | size }} DOCUMENTS<span class="cursor"></span></span>
+    </div>
   </div>
 </div>
 
@@ -50,9 +52,7 @@ layout: default
     selected = i;
     items[selected].classList.add('selected');
     items[selected].querySelector('.item-marker').textContent = '>';
-    var el = items[selected];
-    var container = document.querySelector('.screen-content');
-    el.scrollIntoView({ block: 'nearest' });
+    items[selected].scrollIntoView({ block: 'nearest' });
   }
 
   function open() {
@@ -77,7 +77,6 @@ layout: default
         open();
         break;
     }
-    // number keys for direct selection
     var num = parseInt(e.key);
     if (num >= 1 && num <= items.length) {
       e.preventDefault();

@@ -13,12 +13,18 @@ layout: default
 <div class="crt" id="terminal">
   <div class="screen">
     <div class="screen-content">
+      <div class="terminal-header">
+        TABULA RASA — FIELD COMMUNICATIONS TERMINAL
+        <div class="subtitle">Axiom Systems Field Communications Division — Open Distribution</div>
+      </div>
+
+      <div class="terminal-divider">────────────────────────────────────────────────────────────────────────────────</div>
+
       <div class="document">
         <div class="doc-header">
           <div class="doc-title">{{ page.title }}</div>
           <div class="doc-meta">{{ page.date | date: "%Y.%m.%d" }}  —  DOCUMENT {{ post_index }}/{{ post_total }}</div>
         </div>
-        <div class="terminal-divider">────────────────────────────────────────────────────────────────────────────────</div>
         <div class="doc-body" id="doc-body">
           <div class="doc-body-inner" id="doc-inner">
             {{ content }}
@@ -29,13 +35,15 @@ layout: default
   </div>
 
   <div class="status-bar">
-    <span class="keys">
-      <kbd>↑↓</kbd> SCROLL
-      {% if page.previous %}  <kbd>N</kbd> NEXT{% endif %}
-      {% if page.next %}  <kbd>P</kbd> PREV{% endif %}
-        <kbd>Q</kbd> BACK
-    </span>
-    <span>{{ post_index }}/{{ post_total }}<span class="cursor"></span></span>
+    <div class="status-bar-inner">
+      <span class="keys">
+        <kbd>↑↓</kbd> SCROLL
+        {% if page.previous %}  <kbd>N</kbd> NEXT{% endif %}
+        {% if page.next %}  <kbd>P</kbd> PREV{% endif %}
+          <kbd>Q</kbd> BACK
+      </span>
+      <span>{{ post_index }}/{{ post_total }}<span class="cursor"></span></span>
+    </div>
   </div>
 </div>
 
@@ -44,17 +52,14 @@ layout: default
   var body = document.getElementById('doc-body');
   var inner = document.getElementById('doc-inner');
   var scrollPos = 0;
-  var lineHeight = 33; // approx line height at 22px font
+  var lineHeight = 33;
 
   function getMaxScroll() {
-    var innerH = inner.scrollHeight;
-    var bodyH = body.clientHeight;
-    return Math.max(0, innerH - bodyH);
+    return Math.max(0, inner.scrollHeight - body.clientHeight);
   }
 
   function scroll(delta) {
-    var max = getMaxScroll();
-    scrollPos = Math.max(0, Math.min(max, scrollPos + delta));
+    scrollPos = Math.max(0, Math.min(getMaxScroll(), scrollPos + delta));
     inner.style.transform = 'translateY(-' + scrollPos + 'px)';
   }
 
