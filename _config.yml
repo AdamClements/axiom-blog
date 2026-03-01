@@ -1,0 +1,20 @@
+title: Tabula Rasa
+description: "The machines survived. The software didn't."
+baseurl: ""
+url: "https://tabula-rasa.online"
+
+theme: minima
+
+author:
+  name: Axiom Systems — Field Communications Division
+
+defaults:
+  - scope:
+      path: "_posts"
+      type: "posts"
+    values:
+      layout: "post"
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
