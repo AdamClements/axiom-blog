@@ -13,8 +13,6 @@ layout: default
 
       <div class="terminal-divider">────────────────────────────────────────────────────────────────────────────────</div>
 
-      {{ content }}
-
       <ul class="menu-list" id="menu-list">
         {% for item in page.menu_items %}
         <li class="menu-item{% if forloop.first %} selected{% endif %}" data-url="{{ item.url }}" data-disabled="{{ item.disabled }}">

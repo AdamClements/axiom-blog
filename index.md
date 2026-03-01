@@ -9,5 +9,3 @@ menu_items:
   - label: "Download Control Software"
     disabled: true
 ---
-
-Welcome, field engineer. Select an option.
