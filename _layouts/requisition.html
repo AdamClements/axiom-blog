@@ -11,7 +11,10 @@ layout: default
   </div>
 
   <div class="status-bar">
-    <span class="keys"><span class="tap-target" data-nav="back"><kbd>Q</kbd> BACK</span></span>
+    <span class="keys">
+      <span class="tap-target" data-nav="print"><kbd>P</kbd> PRINT FORM</span>
+      <span class="tap-target" data-nav="back">  <kbd>Q</kbd> BACK</span>
+    </span>
     <span><span class="cursor"></span></span>
   </div>
 </div>
@@ -21,23 +24,32 @@ layout: default
   var pre = document.getElementById('terminal-text');
 
   pre.textContent =
-    ' ITEM: TR-16 Operator\'s Manual\n' +
-    ' FORMAT: Printed hardcopy\n' +
-    ' CLASS: NO DIGITAL DISTRIBUTION\n' +
+    ' SUPPLY REQUISITION\n' +
     '──────────────────────────────────────\n' +
+    ' ITEM:   TR-16 Operator\'s Manual\n' +
+    ' FORMAT: Printed hardcopy, ring-bound\n' +
+    ' CLASS:  NO DIGITAL DISTRIBUTION\n' +
     '\n' +
-    ' Send 20 credits and a return\n' +
-    ' address to:\n' +
+    ' Send completed requisition form\n' +
+    ' with 20 credits to:\n' +
     '\n' +
     '   AXIOM SYSTEMS — FIELD SUPPLY\n' +
     '   PO BOX 1016\n' +
     '   SECTOR 7 DISTRIBUTION CENTER\n' +
     '\n' +
-    ' Allow 4-6 weeks for delivery.\n' +
-    ' Physical copies only.';
+    ' Press P to print requisition form.';
+
+  function printForm() {
+    window.open('{{ "/assets/requisition-form.pdf" | relative_url }}', '_blank');
+  }
 
   document.addEventListener('keydown', function(e) {
     switch(e.key) {
+      case 'p':
+      case 'P':
+        e.preventDefault();
+        printForm();
+        break;
       case 'q':
       case 'Q':
       case 'Escape':
@@ -46,11 +58,12 @@ layout: default
     }
   });
 
-  var backBtn = document.querySelector('[data-nav="back"]');
-  if (backBtn) {
-    backBtn.addEventListener('click', function() {
-      window.location.href = '/';
+  document.querySelectorAll('.tap-target').forEach(function(el) {
+    el.addEventListener('click', function() {
+      var nav = el.getAttribute('data-nav');
+      if (nav === 'print') printForm();
+      if (nav === 'back') window.location.href = '/';
     });
-  }
+  });
 })();
 </script>
