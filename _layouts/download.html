@@ -22,7 +22,7 @@ layout: default
   var ROWS = 14;
   var barWidth = 30;
   var speed = 60;
-  var state = 'input'; // input, downloading, done
+  var state = 'input';
   var inputCode = '';
 
   var lines = [];
@@ -40,14 +40,14 @@ layout: default
     pre.textContent = lines.join('\n');
   }
 
-  // Verification code prompt
+  // Prompt at top
   setLine(0, ' AXIOM FIRMWARE REPOSITORY');
   setLine(1, ' FILE: tr16-control-v2.04.bin');
   setLine(2, '');
   setLine(3, ' Enter the verification code from');
   setLine(4, ' page 3 of your printed manual.');
   setLine(5, '');
-  setLine(6, ' CODE: ' + inputCode + '█');
+  setLine(6, ' CODE: █');
   render();
 
   function renderInput() {
@@ -58,60 +58,63 @@ layout: default
   function startDownload() {
     state = 'downloading';
     setLine(6, ' CODE: ' + inputCode);
-    setLine(7, '');
-    setLine(8, ' VERIFYING CODE...');
+    setLine(7, ' VALIDATING AGAINST REGISTRY...');
     render();
 
     setTimeout(function() {
-      setLine(8, ' VALIDATING AGAINST REGISTRY...');
+      setLine(7, ' CODE ACCEPTED.');
+      setLine(8, ' CONNECTING...');
       render();
       setTimeout(function() {
+        setLine(8, ' CONNECTED. DOWNLOADING...');
         setLine(9, '');
-        setLine(10, ' CODE NOT FOUND IN REGISTRY.');
-        setLine(11, ' NO MANUALS HAVE BEEN DISTRIBUTED');
-        setLine(12, ' TO THIS SECTOR.');
         render();
-        setTimeout(fail, 2000);
-      }, 2000);
+        var progress = 0;
+        tick(progress);
+      }, 1000);
     }, 1500);
   }
 
-  function doDownload() {
-    setLine(9, ' CONNECTED. DOWNLOADING...');
-    setLine(10, '');
+  function tick(progress) {
+    progress += Math.random() * 3 + 0.5;
+    if (progress > 100) progress = 100;
+    var pct = Math.floor(progress);
+    var filled = Math.round((pct / 100) * barWidth);
+    var empty = barWidth - filled;
+    setLine(10, ' [' + Array(filled + 1).join('█') + Array(empty + 1).join('░') + '] ' + pct + '%');
     render();
-    var progress = 0;
 
-    function tick() {
-      progress += Math.random() * 3 + 0.5;
-      if (progress > 100) progress = 100;
-      var pct = Math.floor(progress);
-      var filled = Math.round((pct / 100) * barWidth);
-      var empty = barWidth - filled;
-      setLine(11, ' [' + Array(filled + 1).join('█') + Array(empty + 1).join('░') + '] ' + pct + '%');
-      render();
-
-      if (pct < 100) {
-        var delay = speed;
-        if (pct > 70 && pct < 90) delay = speed * 3;
-        if (pct > 90) delay = speed * 2;
-        setTimeout(tick, delay);
-      } else {
-        setTimeout(fail, 800);
-      }
+    if (pct < 100) {
+      var delay = speed;
+      if (pct > 70 && pct < 90) delay = speed * 3;
+      if (pct > 90) delay = speed * 2;
+      setTimeout(function() { tick(progress); }, delay);
+    } else {
+      setTimeout(verify, 800);
     }
-    tick();
+  }
+
+  function verify() {
+    setLine(12, ' VERIFYING INTEGRITY...');
+    render();
+    setTimeout(function() {
+      setLine(13, ' SCANNING ENVIRONMENT...');
+      render();
+      setTimeout(fail, 1200);
+    }, 1000);
   }
 
   function fail() {
     state = 'done';
     clearLines();
-    setLine(3, ' ██████████████████████████████████████');
-    setLine(5, '         DOWNLOAD FAILED');
-    setLine(6, '       POTENTIAL AI DETECTED');
-    setLine(8, ' ██████████████████████████████████████');
-    setLine(10, ' CONNECTION SEVERED BY REMOTE HOST.');
-    setLine(11, ' THIS TERMINAL HAS BEEN FLAGGED.');
+    setLine(1, ' ██████████████████████████████████████');
+    setLine(3, '         DOWNLOAD FAILED');
+    setLine(4, '       POTENTIAL AI DETECTED');
+    setLine(6, ' ██████████████████████████████████████');
+    setLine(8, ' NO MANUALS DISTRIBUTED TO THIS');
+    setLine(9, ' SECTOR. CODE ORIGIN UNVERIFIABLE.');
+    setLine(11, ' CONNECTION SEVERED BY REMOTE HOST.');
+    setLine(12, ' THIS TERMINAL HAS BEEN FLAGGED.');
     render();
 
     pre.style.color = '#ff3333';
@@ -123,11 +126,13 @@ layout: default
   }
 
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'q' || e.key === 'Q' || e.key === 'Escape') {
-      if (state !== 'input' || inputCode.length === 0) {
-        window.location.href = '/';
-        return;
-      }
+    if (e.key === 'Escape') {
+      window.location.href = '/';
+      return;
+    }
+    if ((e.key === 'q' || e.key === 'Q') && state !== 'input') {
+      window.location.href = '/';
+      return;
     }
 
     if (state === 'input') {
@@ -139,6 +144,9 @@ layout: default
         inputCode = inputCode.slice(0, -1);
         renderInput();
       } else if (e.key.length === 1 && inputCode.length < 20) {
+        if (e.key === 'q' || e.key === 'Q') {
+          // Allow Q as input character
+        }
         e.preventDefault();
         inputCode += e.key.toUpperCase();
         renderInput();
