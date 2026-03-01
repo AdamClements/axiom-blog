@@ -16,7 +16,7 @@ layout: default
       <ul class="menu-list" id="menu-list">
         {% for item in page.menu_items %}
         <li class="menu-item{% if forloop.first %} selected{% endif %}" data-url="{{ item.url }}" data-disabled="{{ item.disabled }}">
-          <span class="item-marker">{% if forloop.first %}&gt;{% else %} {% endif %}</span>
+          <span class="item-marker">{% if forloop.first %}&gt;{% else %}&nbsp;{% endif %}</span>
           <span class="item-label{% if item.disabled %} disabled{% endif %}">{{ item.label }}</span>
         </li>
         {% endfor %}
@@ -40,7 +40,7 @@ layout: default
   function select(i) {
     if (i < 0 || i >= items.length) return;
     items[selected].classList.remove('selected');
-    items[selected].querySelector('.item-marker').textContent = ' ';
+    items[selected].querySelector('.item-marker').textContent = '\u00a0';
     selected = i;
     items[selected].classList.add('selected');
     items[selected].querySelector('.item-marker').textContent = '>';

@@ -19,7 +19,7 @@ layout: default
         {% assign sorted_posts = site.posts | sort: 'date' %}
         {% for post in sorted_posts %}
         <li class="menu-item{% if forloop.first %} selected{% endif %}" data-url="{{ post.url | relative_url }}">
-          <span class="item-marker">{% if forloop.first %}&gt;{% else %} {% endif %}</span>
+          <span class="item-marker">{% if forloop.first %}&gt;{% else %}&nbsp;{% endif %}</span>
           <span class="item-label">{{ post.title }}</span>
         </li>
         {% endfor %}
@@ -43,7 +43,7 @@ layout: default
   function select(i) {
     if (i < 0 || i >= items.length) return;
     items[selected].classList.remove('selected');
-    items[selected].querySelector('.item-marker').textContent = ' ';
+    items[selected].querySelector('.item-marker').textContent = '\u00a0';
     selected = i;
     items[selected].classList.add('selected');
     items[selected].querySelector('.item-marker').textContent = '>';
