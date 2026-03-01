@@ -19,24 +19,39 @@ layout: default
 <script>
 (function() {
   var pre = document.getElementById('terminal-text');
+  var ROWS = 14;
   var barWidth = 30;
   var progress = 0;
   var speed = 60;
 
-  pre.textContent =
-    ' DOWNLOAD CONTROL SOFTWARE\n' +
-    '──────────────────────────────────────\n' +
-    '\n' +
-    ' SOURCE: ASFCD FIRMWARE REPOSITORY\n' +
-    ' FILE: tr16-control-v2.04.bin\n' +
-    ' SIZE: 32,768 BYTES\n' +
-    '\n' +
-    ' CONNECTING TO REPOSITORY...\n';
+  // Fixed-size line buffer
+  var lines = [];
+  for (var i = 0; i < ROWS; i++) lines.push('');
+
+  function setLine(row, text) {
+    if (row >= 0 && row < ROWS) lines[row] = text;
+  }
+
+  function render() {
+    pre.textContent = lines.join('\n');
+  }
+
+  // Initial state
+  setLine(0, ' SOURCE: ASFCD FIRMWARE REPOSITORY');
+  setLine(1, ' FILE:   tr16-control-v2.04.bin');
+  setLine(2, ' SIZE:   32,768 BYTES');
+  setLine(3, '');
+  setLine(4, ' CONNECTING TO REPOSITORY...');
+  render();
 
   setTimeout(startDownload, 1500);
 
   function startDownload() {
-    pre.textContent += ' DOWNLOADING...\n\n';
+    setLine(4, ' CONNECTED.');
+    setLine(5, '');
+    setLine(6, ' DOWNLOADING...');
+    setLine(7, '');
+    render();
     progress = 0;
     tick();
   }
@@ -47,54 +62,47 @@ layout: default
     var pct = Math.floor(progress);
     var filled = Math.round((pct / 100) * barWidth);
     var empty = barWidth - filled;
-    var bar = ' [' + Array(filled + 1).join('█') + Array(empty + 1).join('░') + '] ' + pct + '%';
-
-    // Replace last line or append
-    var lines = pre.textContent.split('\n');
-    var lastIdx = lines.length - 1;
-    if (lines[lastIdx].indexOf('[') >= 0) {
-      lines[lastIdx] = bar;
-    } else {
-      lines.push(bar);
-    }
-    pre.textContent = lines.join('\n');
+    setLine(8, ' [' + Array(filled + 1).join('█') + Array(empty + 1).join('░') + '] ' + pct + '%');
+    render();
 
     if (pct < 100) {
-      // Slow down near 70-90% for tension
       var delay = speed;
       if (pct > 70 && pct < 90) delay = speed * 3;
       if (pct > 90) delay = speed * 2;
       setTimeout(tick, delay);
     } else {
-      setTimeout(fail, 800);
+      setTimeout(verify, 800);
     }
   }
 
-  function fail() {
-    pre.textContent += '\n\n VERIFYING INTEGRITY...\n';
+  function verify() {
+    setLine(10, ' VERIFYING INTEGRITY...');
+    render();
     setTimeout(function() {
-      pre.textContent += ' SCANNING ENVIRONMENT...\n';
-      setTimeout(function() {
-        pre.textContent += '\n';
-        pre.textContent += ' ██████████████████████████████████████\n';
-        pre.textContent += '  DOWNLOAD FAILED\n';
-        pre.textContent += '  POTENTIAL AI DETECTED\n';
-        pre.textContent += ' ██████████████████████████████████████\n';
-        pre.textContent += '\n';
-        pre.textContent += ' CONNECTION SEVERED BY REMOTE HOST.\n';
-        pre.textContent += ' THIS TERMINAL HAS BEEN FLAGGED.\n';
-
-        // Flash the error red
-        var errStyle = document.createElement('style');
-        errStyle.textContent = '#terminal-text { color: #ff3333; text-shadow: 0 0 10px rgba(255,0,0,0.5); }';
-        document.head.appendChild(errStyle);
-
-        // Flicker back to green after a moment
-        setTimeout(function() {
-          errStyle.remove();
-        }, 3000);
-      }, 1200);
+      setLine(11, ' SCANNING ENVIRONMENT...');
+      render();
+      setTimeout(fail, 1200);
     }, 1000);
+  }
+
+  function fail() {
+    // Clear and show error
+    for (var i = 0; i < ROWS; i++) lines[i] = '';
+    setLine(3, ' ██████████████████████████████████████');
+    setLine(5, '         DOWNLOAD FAILED');
+    setLine(6, '       POTENTIAL AI DETECTED');
+    setLine(8, ' ██████████████████████████████████████');
+    setLine(10, ' CONNECTION SEVERED BY REMOTE HOST.');
+    setLine(11, ' THIS TERMINAL HAS BEEN FLAGGED.');
+    render();
+
+    // Flash red
+    pre.style.color = '#ff3333';
+    pre.style.textShadow = '0 0 10px rgba(255,0,0,0.5)';
+    setTimeout(function() {
+      pre.style.color = '';
+      pre.style.textShadow = '';
+    }, 3000);
   }
 
   document.addEventListener('keydown', function(e) {

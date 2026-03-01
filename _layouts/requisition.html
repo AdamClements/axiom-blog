@@ -21,18 +21,10 @@ layout: default
   var pre = document.getElementById('terminal-text');
 
   pre.textContent =
-    ' SUPPLY REQUISITION\n' +
+    ' ITEM: TR-16 Operator\'s Manual\n' +
+    ' FORMAT: Printed hardcopy\n' +
+    ' CLASS: NO DIGITAL DISTRIBUTION\n' +
     '──────────────────────────────────────\n' +
-    '\n' +
-    ' ITEM: TR-16 Field Reference\n' +
-    '       Operator\'s Manual\n' +
-    ' FORMAT: Printed hardcopy, ring-bound\n' +
-    ' CLASS: FIELD UNITS ONLY\n' +
-    '        NO DIGITAL DISTRIBUTION\n' +
-    '\n' +
-    '──────────────────────────────────────\n' +
-    '\n' +
-    ' TO REQUEST A COPY:\n' +
     '\n' +
     ' Send 20 credits and a return\n' +
     ' address to:\n' +
@@ -41,16 +33,8 @@ layout: default
     '   PO BOX 1016\n' +
     '   SECTOR 7 DISTRIBUTION CENTER\n' +
     '\n' +
-    ' Allow 4-6 weeks for supply convoy\n' +
-    ' delivery. Include unit designation\n' +
-    ' and current field coordinates.\n' +
-    '\n' +
-    '──────────────────────────────────────\n' +
-    '\n' +
-    ' NOTE: Do not transmit manual\n' +
-    ' contents over any digital channel.\n' +
-    ' Remnant AI intercept capabilities\n' +
-    ' are unknown. Physical copies only.\n';
+    ' Allow 4-6 weeks for delivery.\n' +
+    ' Physical copies only.';
 
   document.addEventListener('keydown', function(e) {
     switch(e.key) {
