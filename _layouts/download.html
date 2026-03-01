@@ -130,7 +130,7 @@ layout: default
       window.location.href = '/';
       return;
     }
-    if ((e.key === 'q' || e.key === 'Q') && state !== 'input') {
+    if (e.key === 'q' || e.key === 'Q') {
       window.location.href = '/';
       return;
     }
@@ -144,9 +144,6 @@ layout: default
         inputCode = inputCode.slice(0, -1);
         renderInput();
       } else if (e.key.length === 1 && inputCode.length < 20) {
-        if (e.key === 'q' || e.key === 'Q') {
-          // Allow Q as input character
-        }
         e.preventDefault();
         inputCode += e.key.toUpperCase();
         renderInput();
