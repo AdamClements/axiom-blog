@@ -21,10 +21,10 @@ layout: default
   var pre = document.getElementById('terminal-text');
   var ROWS = 14;
   var barWidth = 30;
-  var progress = 0;
   var speed = 60;
+  var state = 'input'; // input, downloading, done
+  var inputCode = '';
 
-  // Fixed-size line buffer
   var lines = [];
   for (var i = 0; i < ROWS; i++) lines.push('');
 
@@ -32,62 +32,74 @@ layout: default
     if (row >= 0 && row < ROWS) lines[row] = text;
   }
 
+  function clearLines() {
+    for (var i = 0; i < ROWS; i++) lines[i] = '';
+  }
+
   function render() {
     pre.textContent = lines.join('\n');
   }
 
-  // Initial state
-  setLine(0, ' SOURCE: AXIOM FIRMWARE REPOSITORY');
-  setLine(1, ' FILE:   tr16-control-v2.04.bin');
-  setLine(2, ' SIZE:   32,768 BYTES');
-  setLine(3, '');
-  setLine(4, ' CONNECTING TO REPOSITORY...');
+  // Verification code prompt
+  setLine(0, ' AXIOM FIRMWARE REPOSITORY');
+  setLine(1, ' FILE: tr16-control-v2.04.bin');
+  setLine(2, '');
+  setLine(3, ' Enter the verification code from');
+  setLine(4, ' page 3 of your printed manual.');
+  setLine(5, '');
+  setLine(6, ' CODE: ' + inputCode + '█');
   render();
 
-  setTimeout(startDownload, 1500);
+  function renderInput() {
+    setLine(6, ' CODE: ' + inputCode + '█');
+    render();
+  }
 
   function startDownload() {
-    setLine(4, ' CONNECTED.');
-    setLine(5, '');
-    setLine(6, ' DOWNLOADING...');
+    state = 'downloading';
+    setLine(6, ' CODE: ' + inputCode);
     setLine(7, '');
+    setLine(8, ' VERIFYING CODE...');
     render();
-    progress = 0;
+
+    setTimeout(function() {
+      setLine(8, ' CODE ACCEPTED.');
+      setLine(9, ' CONNECTING TO REPOSITORY...');
+      render();
+      setTimeout(doDownload, 1200);
+    }, 1500);
+  }
+
+  function doDownload() {
+    setLine(9, ' CONNECTED. DOWNLOADING...');
+    setLine(10, '');
+    render();
+    var progress = 0;
+
+    function tick() {
+      progress += Math.random() * 3 + 0.5;
+      if (progress > 100) progress = 100;
+      var pct = Math.floor(progress);
+      var filled = Math.round((pct / 100) * barWidth);
+      var empty = barWidth - filled;
+      setLine(11, ' [' + Array(filled + 1).join('█') + Array(empty + 1).join('░') + '] ' + pct + '%');
+      render();
+
+      if (pct < 100) {
+        var delay = speed;
+        if (pct > 70 && pct < 90) delay = speed * 3;
+        if (pct > 90) delay = speed * 2;
+        setTimeout(tick, delay);
+      } else {
+        setTimeout(fail, 800);
+      }
+    }
     tick();
   }
 
-  function tick() {
-    progress += Math.random() * 3 + 0.5;
-    if (progress > 100) progress = 100;
-    var pct = Math.floor(progress);
-    var filled = Math.round((pct / 100) * barWidth);
-    var empty = barWidth - filled;
-    setLine(8, ' [' + Array(filled + 1).join('█') + Array(empty + 1).join('░') + '] ' + pct + '%');
-    render();
-
-    if (pct < 100) {
-      var delay = speed;
-      if (pct > 70 && pct < 90) delay = speed * 3;
-      if (pct > 90) delay = speed * 2;
-      setTimeout(tick, delay);
-    } else {
-      setTimeout(verify, 800);
-    }
-  }
-
-  function verify() {
-    setLine(10, ' VERIFYING INTEGRITY...');
-    render();
-    setTimeout(function() {
-      setLine(11, ' SCANNING ENVIRONMENT...');
-      render();
-      setTimeout(fail, 1200);
-    }, 1000);
-  }
-
   function fail() {
-    // Clear and show error
-    for (var i = 0; i < ROWS; i++) lines[i] = '';
+    state = 'done';
+    clearLines();
     setLine(3, ' ██████████████████████████████████████');
     setLine(5, '         DOWNLOAD FAILED');
     setLine(6, '       POTENTIAL AI DETECTED');
@@ -96,7 +108,6 @@ layout: default
     setLine(11, ' THIS TERMINAL HAS BEEN FLAGGED.');
     render();
 
-    // Flash red
     pre.style.color = '#ff3333';
     pre.style.textShadow = '0 0 10px rgba(255,0,0,0.5)';
     setTimeout(function() {
@@ -106,12 +117,26 @@ layout: default
   }
 
   document.addEventListener('keydown', function(e) {
-    switch(e.key) {
-      case 'q':
-      case 'Q':
-      case 'Escape':
+    if (e.key === 'q' || e.key === 'Q' || e.key === 'Escape') {
+      if (state !== 'input' || inputCode.length === 0) {
         window.location.href = '/';
-        break;
+        return;
+      }
+    }
+
+    if (state === 'input') {
+      if (e.key === 'Enter' && inputCode.length > 0) {
+        e.preventDefault();
+        startDownload();
+      } else if (e.key === 'Backspace') {
+        e.preventDefault();
+        inputCode = inputCode.slice(0, -1);
+        renderInput();
+      } else if (e.key.length === 1 && inputCode.length < 20) {
+        e.preventDefault();
+        inputCode += e.key.toUpperCase();
+        renderInput();
+      }
     }
   });
 
