@@ -44,7 +44,7 @@
   text-shadow: inherit;
 }
 
-@media (orientation: portrait) {
+@media (orientation: portrait) and (pointer: coarse) {
   .rotate-msg { display: flex; }
   .scene { display: none; }
 }
