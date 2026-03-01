@@ -31,16 +31,31 @@ layout: default
   {% endfor %}
 
   var selected = 0;
+  var bright = 'color:var(--phosphor-bright)';
+  var dim = 'color:var(--phosphor-dim)';
+
+  function esc(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
 
   function render() {
-    var out = '                         TABULA RASA\n';
-    out += ' Axiom Systems Field Terminal v2.04\n';
-    out += '──────────────────────────────────────\n';
+    var h = '<span style="' + dim + '">';
+    h += '──────────────────────────────────────\n';
+    h += '</span>';
+    h += '<span style="' + bright + '">';
+    h += '                         TABULA RASA\n';
+    h += '</span>';
+    h += '<span style="' + dim + '">';
+    h += '──────────────────────────────────────\n';
+    h += '</span>';
     for (var i = 0; i < menuItems.length; i++) {
-      var marker = (i === selected) ? '>' : ' ';
-      out += marker + ' ' + menuItems[i].label + '\n';
+      var marker = (i === selected) ? '&gt;' : ' ';
+      var style = (i === selected) ? bright : dim;
+      h += '<span style="' + style + '">';
+      h += marker + ' ' + esc(menuItems[i].label) + '\n';
+      h += '</span>';
     }
-    pre.textContent = out;
+    pre.innerHTML = h;
   }
 
   render();
@@ -77,7 +92,7 @@ layout: default
   });
 
   // Touch: tap menu item to open
-  var headerLines = 3; // title, subtitle, rule
+  var headerLines = 3; // rule, title, rule
   pre.addEventListener('click', function(e) {
     var lineHeight = parseFloat(getComputedStyle(pre).lineHeight);
     var rect = pre.getBoundingClientRect();
