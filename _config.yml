@@ -1,7 +1,7 @@
 title: Tabula Rasa
 description: "The machines survived. The software didn't."
-baseurl: ""
-url: "https://tabula-rasa.online"
+baseurl: "/axiom-blog"
+url: "https://adamclements.github.io"
 
 theme: minima
 
