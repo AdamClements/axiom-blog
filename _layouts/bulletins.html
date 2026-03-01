@@ -55,6 +55,8 @@ layout: default
     if (url) navigateTo(url);
   }
 
+  var sig = { signal: window._pageAbort.signal };
+
   document.addEventListener('keydown', function(e) {
     switch(e.key) {
       case 'ArrowUp':
@@ -77,7 +79,7 @@ layout: default
         navigateTo('/');
         break;
     }
-  });
+  }, sig);
 
   // Touch: tap menu item to open
   var headerLines = 2; // title, rule

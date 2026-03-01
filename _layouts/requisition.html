@@ -39,6 +39,8 @@ layout: default
     window.open('{{ "/assets/requisition-form.pdf" | relative_url }}', '_blank');
   }
 
+  var sig = { signal: window._pageAbort.signal };
+
   document.addEventListener('keydown', function(e) {
     switch(e.key) {
       case 'p':
@@ -52,7 +54,7 @@ layout: default
         navigateTo('/');
         break;
     }
-  });
+  }, sig);
 
   document.querySelectorAll('.tap-target').forEach(function(el) {
     el.addEventListener('click', function() {

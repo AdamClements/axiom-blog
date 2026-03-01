@@ -38,7 +38,7 @@ layout: default
     h += '────────────────────────────\n';
     h += '</span>';
     h += '<span style="' + bright + '">';
-    h += '            TABULA RASA\n';
+    h += '               TABULA RASA\n';
     h += '</span>';
     h += '<span style="' + dim + '">';
     h += '────────────────────────────\n';
@@ -67,6 +67,8 @@ layout: default
     if (url) navigateTo(url);
   }
 
+  var sig = { signal: window._pageAbort.signal };
+
   document.addEventListener('keydown', function(e) {
     switch(e.key) {
       case 'ArrowUp':
@@ -84,7 +86,7 @@ layout: default
         open();
         break;
     }
-  });
+  }, sig);
 
   // Touch: tap menu item to open
   var headerLines = 3; // rule, title, rule

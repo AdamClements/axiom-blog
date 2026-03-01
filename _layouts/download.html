@@ -111,6 +111,8 @@ layout: default
     }, 3000);
   }
 
+  var sig = { signal: window._pageAbort.signal };
+
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
       navigateTo('/');
@@ -135,7 +137,7 @@ layout: default
         renderInput();
       }
     }
-  });
+  }, sig);
 
   var backBtn = document.querySelector('[data-nav="back"]');
   if (backBtn) {

@@ -31,6 +31,7 @@ LANDSCAPE ORIENTATION</pre>
         </div>
       </div>
 
+      <script>window._pageAbort = new AbortController();</script>
       <div id="main-screen" style="display:none;">
         {{ content }}
       </div>
@@ -93,8 +94,22 @@ LANDSCAPE ORIENTATION</pre>
       T[2]+','+T[5]+',0,'+T[8]+')';
   }
 
+  var MOBILE_BP = 1024;
+
   function layoutScene() {
     var vw = window.innerWidth, vh = window.innerHeight;
+
+    // Mobile: full-screen CRT, no scene positioning
+    if (vw <= MOBILE_BP) {
+      frame.style.display = 'none';
+      housing.style.cssText = '';
+      var screenW = vw * 0.9;
+      var fs = Math.max(12, Math.floor(screenW / 40));
+      document.documentElement.style.setProperty('--term-font-size', fs + 'px');
+      return;
+    }
+
+    frame.style.display = '';
     var sx = vw / IMG_W, sy = vh / IMG_H;
     var s = Math.max(sx, sy);
     var fw = IMG_W * s, fh = IMG_H * s;
@@ -132,7 +147,7 @@ LANDSCAPE ORIENTATION</pre>
     housing.style.transformOrigin = '0 0';
     housing.style.transform = computeMatrix3d(boxW, boxH, rel.tl, rel.tr, rel.br, rel.bl);
 
-    // Scale font so ~30 chars fit the screen width
+    // Scale font so ~40 chars fit the screen width
     var screenW = boxW * 0.9;
     var fs = Math.max(8, Math.floor(screenW / 18));
     document.documentElement.style.setProperty('--term-font-size', fs + 'px');
@@ -221,8 +236,13 @@ LANDSCAPE ORIENTATION</pre>
   window.addEventListener('resize', layoutScene);
 
   // SPA navigation: fetch pages via AJAX and swap screen content
-  // to avoid reloading the background image
+  // to avoid reloading the background image.
+  // Uses AbortController so old page event listeners are removed on navigate.
   window.navigateTo = function(url) {
+    // Abort old page's event listeners
+    if (window._pageAbort) window._pageAbort.abort();
+    window._pageAbort = new AbortController();
+
     fetch(url)
       .then(function(r) { return r.text(); })
       .then(function(html) {

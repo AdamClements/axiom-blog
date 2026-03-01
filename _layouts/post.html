@@ -36,7 +36,7 @@ layout: default
   var body = document.getElementById('doc-body');
   var screen = document.querySelector('.screen');
 
-  var COLS = 28;
+  var COLS = 40;
   var title = '{{ page.title | upcase }}';
   var logDate = '{{ page.log_date }}';
 
@@ -133,6 +133,8 @@ layout: default
     });
   });
 
+  var sig = { signal: window._pageAbort.signal };
+
   document.addEventListener('keydown', function(e) {
     switch(e.key) {
       case 'ArrowUp':
@@ -182,6 +184,6 @@ layout: default
         navigateTo('{{ "/bulletins/" | relative_url }}');
         break;
     }
-  });
+  }, sig);
 })();
 </script>
