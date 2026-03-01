@@ -44,7 +44,7 @@
   text-shadow: inherit;
 }
 
-@media (orientation: portrait) and (max-width: 768px) {
+@media (orientation: portrait) {
   .rotate-msg { display: flex; }
   .crt-housing { display: none; }
 }
