@@ -2,27 +2,110 @@
 layout: default
 ---
 
-<article class="post">
-  <header class="post-header">
-    <h1 class="post-title">{{ page.title }}</h1>
-    <div class="post-date">{{ page.date | date: "%Y.%m.%d" }}</div>
-  </header>
+{% assign sorted = site.posts | sort: 'date' %}
+{% for p in sorted %}
+  {% if p.url == page.url %}
+    {% assign post_index = forloop.index %}
+    {% assign post_total = forloop.length %}
+  {% endif %}
+{% endfor %}
 
-  <div class="post-content">
-    {{ content }}
+<div class="crt" id="terminal">
+  <div class="screen">
+    <div class="screen-content">
+      <div class="document">
+        <div class="doc-header">
+          <div class="doc-title">{{ page.title }}</div>
+          <div class="doc-meta">{{ page.date | date: "%Y.%m.%d" }}  —  DOCUMENT {{ post_index }}/{{ post_total }}</div>
+        </div>
+        <div class="terminal-divider">────────────────────────────────────────────────────────────────────────────────</div>
+        <div class="doc-body" id="doc-body">
+          <div class="doc-body-inner" id="doc-inner">
+            {{ content }}
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <nav class="post-nav">
-    <div class="post-nav-links">
-      {% if page.next %}
-      <a href="{{ page.next.url | relative_url }}" class="nav-prev">&lt; {{ page.next.title }}</a>
-      {% else %}
-      <span class="nav-prev"></span>
-      {% endif %}
-      {% if page.previous %}
-      <a href="{{ page.previous.url | relative_url }}" class="nav-next">{{ page.previous.title }} &gt;</a>
-      {% endif %}
-    </div>
-    <a href="{{ '/' | relative_url }}" class="back-link">RETURN TO BULLETIN BOARD</a>
-  </nav>
-</article>
+  <div class="status-bar">
+    <span class="keys">
+      <kbd>↑↓</kbd> SCROLL
+      {% if page.previous %}  <kbd>N</kbd> NEXT{% endif %}
+      {% if page.next %}  <kbd>P</kbd> PREV{% endif %}
+        <kbd>Q</kbd> BACK
+    </span>
+    <span>{{ post_index }}/{{ post_total }}<span class="cursor"></span></span>
+  </div>
+</div>
+
+<script>
+(function() {
+  var body = document.getElementById('doc-body');
+  var inner = document.getElementById('doc-inner');
+  var scrollPos = 0;
+  var lineHeight = 33; // approx line height at 22px font
+
+  function getMaxScroll() {
+    var innerH = inner.scrollHeight;
+    var bodyH = body.clientHeight;
+    return Math.max(0, innerH - bodyH);
+  }
+
+  function scroll(delta) {
+    var max = getMaxScroll();
+    scrollPos = Math.max(0, Math.min(max, scrollPos + delta));
+    inner.style.transform = 'translateY(-' + scrollPos + 'px)';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    switch(e.key) {
+      case 'ArrowUp':
+      case 'k':
+        e.preventDefault();
+        scroll(-lineHeight);
+        break;
+      case 'ArrowDown':
+      case 'j':
+        e.preventDefault();
+        scroll(lineHeight);
+        break;
+      case ' ':
+      case 'PageDown':
+        e.preventDefault();
+        scroll(body.clientHeight - lineHeight);
+        break;
+      case 'PageUp':
+        e.preventDefault();
+        scroll(-(body.clientHeight - lineHeight));
+        break;
+      case 'Home':
+        e.preventDefault();
+        scrollPos = 0;
+        inner.style.transform = 'translateY(0)';
+        break;
+      case 'End':
+        e.preventDefault();
+        scroll(getMaxScroll());
+        break;
+      case 'n':
+      case 'N':
+        {% if page.previous %}
+        window.location.href = '{{ page.previous.url | relative_url }}';
+        {% endif %}
+        break;
+      case 'p':
+      case 'P':
+        {% if page.next %}
+        window.location.href = '{{ page.next.url | relative_url }}';
+        {% endif %}
+        break;
+      case 'q':
+      case 'Q':
+      case 'Escape':
+        window.location.href = '{{ "/" | relative_url }}';
+        break;
+    }
+  });
+})();
+</script>

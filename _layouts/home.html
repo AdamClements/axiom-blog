@@ -2,24 +2,88 @@
 layout: default
 ---
 
-<div class="landing-content">
-  {{ content }}
-</div>
+<div class="crt" id="terminal">
+  <div class="screen">
+    <div class="screen-content">
+      <div class="terminal-header">
+        TABULA RASA — FIELD COMMUNICATIONS TERMINAL
+        <div class="subtitle">Axiom Systems Field Communications Division — Open Distribution</div>
+      </div>
 
-<div class="board-header">Field Bulletins & Recovered Documents</div>
+      <div class="terminal-divider">────────────────────────────────────────────────────────────────────────────────</div>
 
-<div class="bulletin-board">
-  {% assign sorted_posts = site.posts | sort: 'date' %}
-  {% for post in sorted_posts %}
-  <div class="bulletin">
-    <div class="bulletin-header">
-      <a href="{{ post.url | relative_url }}" class="bulletin-title">{{ post.title }}</a>
-      <span class="bulletin-date">{{ post.date | date: "%Y.%m.%d" }}</span>
+      {{ content }}
+
+      <div class="terminal-divider">────────────────────────────────────────────────────────────────────────────────</div>
+
+      <div style="color: var(--amber); letter-spacing: 0.15em; margin-bottom: 0.5rem;">RECOVERED DOCUMENTS & FIELD BULLETINS</div>
+
+      <ul class="bulletin-list" id="bulletin-list">
+        {% assign sorted_posts = site.posts | sort: 'date' %}
+        {% for post in sorted_posts %}
+        <li class="bulletin-item{% if forloop.first %} selected{% endif %}" data-url="{{ post.url | relative_url }}" data-index="{{ forloop.index }}">
+          <span class="item-marker">{% if forloop.first %}&gt;{% else %} {% endif %}</span>
+          <span class="item-index">{{ forloop.index }}.</span>
+          <span class="item-date">{{ post.date | date: "%Y.%m.%d" }}</span>
+          <span class="item-title">{{ post.title }}</span>
+        </li>
+        {% endfor %}
+      </ul>
     </div>
-    {% if post.classification %}
-    <div class="bulletin-classification">{{ post.classification }}</div>
-    {% endif %}
-    <div class="bulletin-excerpt">{{ post.excerpt | strip_html | truncatewords: 30 }}</div>
   </div>
-  {% endfor %}
+
+  <div class="status-bar">
+    <span class="keys"><kbd>↑↓</kbd> SELECT   <kbd>ENTER</kbd> OPEN</span>
+    <span>{{ site.posts | size }} DOCUMENTS<span class="cursor"></span></span>
+  </div>
 </div>
+
+<script>
+(function() {
+  var items = document.querySelectorAll('.bulletin-item');
+  var selected = 0;
+
+  function select(i) {
+    if (i < 0 || i >= items.length) return;
+    items[selected].classList.remove('selected');
+    items[selected].querySelector('.item-marker').textContent = ' ';
+    selected = i;
+    items[selected].classList.add('selected');
+    items[selected].querySelector('.item-marker').textContent = '>';
+    var el = items[selected];
+    var container = document.querySelector('.screen-content');
+    el.scrollIntoView({ block: 'nearest' });
+  }
+
+  function open() {
+    var url = items[selected].getAttribute('data-url');
+    if (url) window.location.href = url;
+  }
+
+  document.addEventListener('keydown', function(e) {
+    switch(e.key) {
+      case 'ArrowUp':
+      case 'k':
+        e.preventDefault();
+        select(selected - 1);
+        break;
+      case 'ArrowDown':
+      case 'j':
+        e.preventDefault();
+        select(selected + 1);
+        break;
+      case 'Enter':
+        e.preventDefault();
+        open();
+        break;
+    }
+    // number keys for direct selection
+    var num = parseInt(e.key);
+    if (num >= 1 && num <= items.length) {
+      e.preventDefault();
+      select(num - 1);
+      open();
+    }
+  });
+})();
+</script>
