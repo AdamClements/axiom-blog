@@ -17,18 +17,23 @@
     <pre>ROTATE TERMINAL TO
 LANDSCAPE ORIENTATION</pre>
   </div>
-  <div class="crt-housing">
-    <div class="crt" id="boot-screen" style="display:none;">
-      <div class="crt-glass"></div>
-      <div class="screen">
-        <div class="screen-content">
-          <pre class="terminal-pre" id="boot-log"></pre>
+  <div class="scene">
+    <div class="scene-frame">
+      <img class="scene-img" src="{{ '/assets/bg.png' | relative_url }}" alt="">
+    </div>
+    <div class="crt-housing">
+      <div class="crt" id="boot-screen" style="display:none;">
+        <div class="crt-glass"></div>
+        <div class="screen">
+          <div class="screen-content">
+            <pre class="terminal-pre" id="boot-log"></pre>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div id="main-screen" style="display:none;">
-      {{ content }}
+      <div id="main-screen" style="display:none;">
+        {{ content }}
+      </div>
     </div>
   </div>
 
@@ -38,7 +43,45 @@ LANDSCAPE ORIENTATION</pre>
   var bootScreen = document.getElementById('boot-screen');
   var mainScreen = document.getElementById('main-screen');
 
+  // Scene layout: map CRT onto monitor in the background photo
+  var IMG_W = 1536, IMG_H = 1024; // bg.png native dimensions
+  var frame = document.querySelector('.scene-frame');
+  var housing = document.querySelector('.crt-housing');
+
+  // Monitor screen bounds — inset slightly from alpha polygon in bg.png
+  // so the bezel always overlaps the terminal edges
+  var SCREEN_L = 0.140;
+  var SCREEN_T = 0.355;
+  var SCREEN_W = 0.188;
+  var SCREEN_H = 0.315;
+
+  function layoutScene() {
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var sx = vw / IMG_W, sy = vh / IMG_H;
+    var s = Math.max(sx, sy); // cover
+    var fw = IMG_W * s, fh = IMG_H * s;
+    // Center the overflow (same as object-fit:cover centering)
+    var fl = (vw - fw) / 2;
+    var ft = (vh - fh) / 2;
+    frame.style.width = fw + 'px';
+    frame.style.height = fh + 'px';
+    frame.style.left = fl + 'px';
+    frame.style.top = ft + 'px';
+
+    // Position CRT housing over the monitor screen
+    housing.style.left = (fl + fw * SCREEN_L) + 'px';
+    housing.style.top = (ft + fh * SCREEN_T) + 'px';
+    housing.style.width = (fw * SCREEN_W) + 'px';
+    housing.style.height = (fh * SCREEN_H) + 'px';
+
+    // Scale font so ~58 chars fit the screen width
+    var screenW = fw * SCREEN_W * 0.9;
+    var fs = Math.max(8, Math.floor(screenW / 36));
+    document.documentElement.style.setProperty('--term-font-size', fs + 'px');
+  }
+
   function start() {
+    layoutScene();
     if (booted) {
       mainScreen.style.display = '';
       return;
@@ -116,18 +159,8 @@ LANDSCAPE ORIENTATION</pre>
   setTimeout(printLine, 500);
   } // end runBoot
 
-  // Scale terminal to fit viewport
-  function fitToScreen() {
-    var el = document.querySelector('.crt-housing');
-    el.style.transform = '';
-    var rect = el.getBoundingClientRect();
-    var sx = window.innerWidth / rect.width;
-    var sy = window.innerHeight / rect.height;
-    var s = Math.min(1, sx, sy) * 0.95;
-    el.style.transform = 'scale(' + s + ')';
-  }
-  fitToScreen();
-  window.addEventListener('resize', fitToScreen);
+  layoutScene();
+  window.addEventListener('resize', layoutScene);
 })();
 </script>
 </body>
