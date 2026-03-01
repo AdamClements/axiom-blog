@@ -10,27 +10,21 @@ layout: default
   {% endif %}
 {% endfor %}
 
+<div style="display:none;" id="raw-content">{{ content }}</div>
+
 <div class="crt" id="terminal">
   <div class="crt-glass"></div>
   <div class="screen">
     <div class="screen-content">
-      <div class="terminal-header">
-        TABULA RASA — FIELD COMMUNICATIONS TERMINAL
-        <div class="subtitle">Axiom Systems Field Communications Division — Open Distribution</div>
-      </div>
-
-      <div class="terminal-divider">────────────────────────────────────────────────────────────────────────────────</div>
-
-      <div class="document">
-        <div class="doc-header">
-          <div class="doc-title">{{ page.title }}</div>
-          <div class="doc-meta">{{ page.date | date: "%Y.%m.%d" }}  —  DOCUMENT {{ post_index }}/{{ post_total }}</div>
-        </div>
-        <div class="doc-body" id="doc-body">
-          <div class="doc-body-inner" id="doc-inner">
-            {{ content }}
-          </div>
-        </div>
+      <pre class="terminal-pre" id="terminal-header">
+               TABULA RASA
+ Axiom Systems Field Terminal v2.04
+────────────────────────────────────────
+ {{ page.title | upcase }}
+ {{ page.date | date: "%Y.%m.%d" }} — DOCUMENT {{ post_index }}/{{ post_total }}
+────────────────────────────────────────</pre>
+      <div class="doc-scroll" id="doc-scroll">
+        <pre class="terminal-pre" id="doc-body"></pre>
       </div>
     </div>
   </div>
@@ -50,18 +44,79 @@ layout: default
 
 <script>
 (function() {
+  // Extract text content from rendered markdown
+  var raw = document.getElementById('raw-content');
   var body = document.getElementById('doc-body');
-  var inner = document.getElementById('doc-inner');
-  var scrollPos = 0;
-  var lineHeight = 30;
+  var scroll = document.getElementById('doc-scroll');
 
-  function getMaxScroll() {
-    return Math.max(0, inner.scrollHeight - body.clientHeight);
+  // Walk the HTML and convert to plain text with line wrapping
+  function htmlToText(el) {
+    var result = '';
+    for (var i = 0; i < el.childNodes.length; i++) {
+      var node = el.childNodes[i];
+      if (node.nodeType === 3) {
+        result += node.textContent;
+      } else if (node.nodeType === 1) {
+        var tag = node.tagName;
+        if (tag === 'P') {
+          result += htmlToText(node) + '\n\n';
+        } else if (tag === 'BR') {
+          result += '\n';
+        } else if (tag === 'HR') {
+          result += '────────────────────────────────────────\n';
+        } else if (tag === 'UL' || tag === 'OL') {
+          for (var j = 0; j < node.children.length; j++) {
+            result += ' - ' + htmlToText(node.children[j]).trim() + '\n';
+          }
+          result += '\n';
+        } else if (tag === 'PRE' || tag === 'CODE') {
+          result += node.textContent;
+        } else if (tag === 'BLOCKQUOTE') {
+          var bqLines = htmlToText(node).trim().split('\n');
+          result += bqLines.map(function(l) { return '  ' + l; }).join('\n') + '\n\n';
+        } else if (tag === 'H1' || tag === 'H2' || tag === 'H3') {
+          result += htmlToText(node).toUpperCase() + '\n';
+        } else {
+          result += htmlToText(node);
+        }
+      }
+    }
+    return result;
   }
 
-  function scroll(delta) {
+  var text = htmlToText(raw).trim();
+  // Word wrap at 38 chars (40 minus 2 for margin)
+  var wrapped = [];
+  text.split('\n').forEach(function(line) {
+    if (line.length <= 38) {
+      wrapped.push(line);
+    } else {
+      var words = line.split(' ');
+      var current = '';
+      words.forEach(function(word) {
+        if (current.length + word.length + 1 > 38) {
+          wrapped.push(current);
+          current = word;
+        } else {
+          current = current ? current + ' ' + word : word;
+        }
+      });
+      if (current) wrapped.push(current);
+    }
+  });
+  body.textContent = wrapped.join('\n');
+
+  // Scrolling
+  var scrollPos = 0;
+  var lineHeight = parseFloat(getComputedStyle(body).lineHeight) || 30;
+
+  function getMaxScroll() {
+    return Math.max(0, body.scrollHeight - scroll.clientHeight);
+  }
+
+  function doScroll(delta) {
     scrollPos = Math.max(0, Math.min(getMaxScroll(), scrollPos + delta));
-    inner.style.transform = 'translateY(-' + scrollPos + 'px)';
+    body.style.transform = 'translateY(-' + scrollPos + 'px)';
   }
 
   document.addEventListener('keydown', function(e) {
@@ -69,30 +124,21 @@ layout: default
       case 'ArrowUp':
       case 'k':
         e.preventDefault();
-        scroll(-lineHeight);
+        doScroll(-lineHeight);
         break;
       case 'ArrowDown':
       case 'j':
         e.preventDefault();
-        scroll(lineHeight);
+        doScroll(lineHeight);
         break;
       case ' ':
       case 'PageDown':
         e.preventDefault();
-        scroll(body.clientHeight - lineHeight);
+        doScroll(scroll.clientHeight - lineHeight);
         break;
       case 'PageUp':
         e.preventDefault();
-        scroll(-(body.clientHeight - lineHeight));
-        break;
-      case 'Home':
-        e.preventDefault();
-        scrollPos = 0;
-        inner.style.transform = 'translateY(0)';
-        break;
-      case 'End':
-        e.preventDefault();
-        scroll(getMaxScroll());
+        doScroll(-(scroll.clientHeight - lineHeight));
         break;
       case 'n':
       case 'N':
@@ -113,7 +159,7 @@ layout: default
         break;
       case 'ArrowLeft':
         {% if page.previous %}
-        window.location.href = '{{ page.next.url | relative_url }}';
+        window.location.href = '{{ page.previous.url | relative_url }}';
         {% endif %}
         break;
       case 'q':

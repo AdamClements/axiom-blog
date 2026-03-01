@@ -6,24 +6,14 @@ layout: default
   <div class="crt-glass"></div>
   <div class="screen">
     <div class="screen-content">
-      <div class="terminal-header">
-        TABULA RASA
-        <div class="subtitle">Axiom Systems Field Communications Terminal v2.04</div>
-      </div>
+      <pre class="terminal-pre" id="terminal-text">
+               TABULA RASA
+ Axiom Systems Field Terminal v2.04
+────────────────────────────────────────
 
-      <div class="terminal-divider">────────────────────────────────────────────────────────────────────────────────</div>
-
-      <div style="color: var(--amber); margin-bottom: 0.8rem;">BULLETIN BOARD</div>
-
-      <ul class="menu-list" id="bulletin-list">
-        {% assign sorted_posts = site.posts | sort: 'date' %}
-        {% for post in sorted_posts %}
-        <li class="menu-item{% if forloop.first %} selected{% endif %}" data-url="{{ post.url | relative_url }}">
-          <span class="item-marker">{% if forloop.first %}&gt;{% else %}&nbsp;{% endif %}</span>
-          <span class="item-label">{{ post.title }}</span>
-        </li>
-        {% endfor %}
-      </ul>
+ BULLETIN BOARD
+{% assign sorted_posts = site.posts | sort: 'date' %}{% for post in sorted_posts %}{% if forloop.first %}&gt;{% else %} {% endif %} {{ post.title }}
+{% endfor %}</pre>
     </div>
   </div>
 
@@ -37,20 +27,42 @@ layout: default
 
 <script>
 (function() {
-  var items = document.querySelectorAll('.menu-item');
+  var pre = document.getElementById('terminal-text');
+  var lines = pre.textContent.split('\n');
+  var menuStart = -1;
+  var menuItems = [];
+
+  {% assign sorted_posts = site.posts | sort: 'date' %}
+  {% for post in sorted_posts %}
+  menuItems.push({ label: '{{ post.title }}', url: '{{ post.url | relative_url }}' });
+  {% endfor %}
+
+  var allLines = lines.slice();
+  for (var i = 0; i < allLines.length; i++) {
+    if (allLines[i].match(/^[> ] /)) {
+      if (menuStart < 0) menuStart = i;
+    }
+  }
+
   var selected = 0;
 
+  function render() {
+    for (var i = 0; i < menuItems.length; i++) {
+      var lineIdx = menuStart + i;
+      var marker = (i === selected) ? '>' : ' ';
+      lines[lineIdx] = marker + ' ' + menuItems[i].label;
+    }
+    pre.textContent = lines.join('\n');
+  }
+
   function select(i) {
-    if (i < 0 || i >= items.length) return;
-    items[selected].classList.remove('selected');
-    items[selected].querySelector('.item-marker').textContent = '\u00a0';
+    if (i < 0 || i >= menuItems.length) return;
     selected = i;
-    items[selected].classList.add('selected');
-    items[selected].querySelector('.item-marker').textContent = '>';
+    render();
   }
 
   function open() {
-    var url = items[selected].getAttribute('data-url');
+    var url = menuItems[selected].url;
     if (url) window.location.href = url;
   }
 

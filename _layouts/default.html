@@ -9,11 +9,11 @@
 </head>
 <body>
   <div class="crt-housing">
-    <div class="crt" id="boot-screen">
+    <div class="crt" id="boot-screen" style="display:none;">
       <div class="crt-glass"></div>
       <div class="screen">
         <div class="screen-content">
-          <pre class="boot-log" id="boot-log"></pre>
+          <pre class="terminal-pre" id="boot-log"></pre>
         </div>
       </div>
     </div>
@@ -25,9 +25,17 @@
 
 <script>
 (function() {
-  var bootLog = document.getElementById('boot-log');
+  var booted = sessionStorage.getItem('asfcd-booted');
   var bootScreen = document.getElementById('boot-screen');
   var mainScreen = document.getElementById('main-screen');
+
+  if (booted) {
+    mainScreen.style.display = '';
+    return;
+  }
+
+  bootScreen.style.display = '';
+  var bootLog = document.getElementById('boot-log');
 
   var bootLines = [
     { text: 'AXIOM SYSTEMS TR-16 FIELD TERMINAL', delay: 0 },
@@ -80,43 +88,9 @@
   }
 
   function finishBoot() {
+    sessionStorage.setItem('asfcd-booted', '1');
     bootScreen.style.display = 'none';
     mainScreen.style.display = '';
-    revealContent();
-  }
-
-  function revealContent() {
-    var content = mainScreen.querySelector('.screen-content');
-    if (!content) return;
-
-    var walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
-    var textNodes = [];
-    while (walker.nextNode()) textNodes.push(walker.currentNode);
-
-    var allChars = [];
-    textNodes.forEach(function(node) {
-      var text = node.textContent;
-      node.textContent = '';
-      for (var i = 0; i < text.length; i++) {
-        allChars.push({ node: node, char: text[i] });
-      }
-    });
-
-    var idx = 0;
-    var charsPerTick = 3;
-    var tickMs = 10;
-
-    function tick() {
-      var end = Math.min(idx + charsPerTick, allChars.length);
-      for (var i = idx; i < end; i++) {
-        allChars[i].node.textContent += allChars[i].char;
-      }
-      idx = end;
-      if (idx < allChars.length) {
-        setTimeout(tick, tickMs);
-      }
-    }
-    tick();
   }
 
   setTimeout(printLine, 500);
