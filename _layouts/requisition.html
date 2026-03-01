@@ -1,0 +1,60 @@
+---
+layout: default
+---
+
+<div class="crt" id="terminal">
+  <div class="crt-glass"></div>
+  <div class="screen">
+    <div class="screen-content">
+      <div class="terminal-header">
+        TABULA RASA
+        <div class="subtitle">Axiom Systems Field Communications Terminal v2.04</div>
+      </div>
+
+      <div class="terminal-divider">────────────────────────────────────────────────────────────────────────────────</div>
+
+      <div style="color: var(--amber); letter-spacing: 0.15em; margin-bottom: 0.8rem;">SUPPLY REQUISITION — FIELD REFERENCE MANUAL</div>
+
+      <div class="doc-body">
+        <p><strong>ITEM:</strong> Axiom Systems TR-16 Field Reference</p>
+        <p><strong>FORMAT:</strong> Printed hardcopy — ring-bound, 80pp</p>
+        <p><strong>CLASSIFICATION:</strong> FIELD UNITS ONLY — NO DIGITAL DISTRIBUTION</p>
+
+        <hr>
+
+        <p>The TR-16 Field Reference contains complete hardware specifications, instruction set documentation, device port maps, memory layout diagrams, and example firmware for all Axiom Systems, Griffin Defence, and Ironhorse Industries components.</p>
+
+        <p>Physical copies are produced at Axiom Systems Sector 7 printing facility and dispatched to field coordinates via supply convoy.</p>
+
+        <p style="color: var(--amber);">SUPPLY REQUISITION SYSTEM COMING ONLINE.</p>
+        <p style="color: var(--amber);">ENTER YOUR FIELD COORDINATES WHEN PROMPTED.</p>
+
+        <hr>
+
+        <p>STATUS: <strong>AWAITING SUPPLY LINE ESTABLISHMENT</strong></p>
+        <p style="color: var(--phosphor-dim);">Check back at next scheduled bulletin for availability.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div class="status-bar-inner">
+      <span class="keys"><kbd>Q</kbd> BACK</span>
+      <span>STANDBY<span class="cursor"></span></span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  document.addEventListener('keydown', function(e) {
+    switch(e.key) {
+      case 'q':
+      case 'Q':
+      case 'Escape':
+        window.location.href = '/';
+        break;
+    }
+  });
+})();
+</script>

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Recovered Field Log — Day 12: The Warehouse"
+title: "Day 12: The Warehouse"
 date: 2026-03-04
 categories: archive
 ---

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Recovered Field Log — Day 40: Assembly Required"
+title: "Day 40: Assembly Required"
 date: 2026-03-07
 categories: archive
 ---

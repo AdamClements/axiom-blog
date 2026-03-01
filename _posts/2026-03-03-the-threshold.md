@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Recovered Field Log — Day 3: The Threshold"
+title: "Day 3: The Threshold"
 date: 2026-03-03
 categories: archive
 ---

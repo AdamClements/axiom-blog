@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Recovered Field Log — Day 31: Radio Contact"
+title: "Day 31: Radio Contact"
 date: 2026-03-06
 categories: archive
 ---

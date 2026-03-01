@@ -1,22 +1,20 @@
 ---
-layout: home
+layout: menu
 title: Tabula Rasa
+menu_items:
+  - label: "BULLETIN BOARD"
+    url: "/bulletins/"
+    note: "7 documents available"
+  - label: "REQUEST FIELD REFERENCE"
+    url: "/requisition/"
+    note: "physical copy — requires supply credits"
+  - label: "DOWNLOAD CONTROL SOFTWARE"
+    disabled: true
+    note: "awaiting clearance"
 ---
 
-**AXIOM SYSTEMS — FIELD COMMUNICATIONS DIVISION**
+Welcome, field engineer.
 
-*Classification: OPEN DISTRIBUTION*
+This terminal is a public access node maintained by the Axiom Systems Field Communications Division. Select an option below.
 
----
-
-This terminal is a public access node maintained by the Axiom Systems Field Communications Division. All field engineers with valid sector clearance are authorised to access archived bulletins and recovered documents.
-
-The TR-16 processor programme is active. Hardware is in production. Field units are operational.
-
-If you are reading this, you survived. Report to your sector quartermaster for assignment and equipment requisition. Refer to the **Axiom Systems TR-16 Field Reference** for all hardware specifications, instruction set documentation, and device port maps.
-
-Do not attempt to operate TR-16 equipment without the manual. Do not trust digital copies.
-
-*Some assembly required.*
-
----
+Do not attempt to operate TR-16 equipment without the field reference. Do not trust digital copies.

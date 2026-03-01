@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Recovered Field Log — Day 19: First Boot"
+title: "Day 19: First Boot"
 date: 2026-03-05
 categories: archive
 ---

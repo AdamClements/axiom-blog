@@ -238,23 +238,24 @@ body {
   white-space: nowrap;
 }
 
-/* === BULLETIN LIST === */
+/* === MENU / LIST === */
 
-.bulletin-list {
+.menu-list {
   list-style: none;
 }
 
-.bulletin-item {
-  padding: 0.2rem 0;
+.menu-item {
+  padding: 0.3rem 0;
   display: flex;
   gap: 1rem;
+  align-items: baseline;
 }
 
-.bulletin-item.selected {
+.menu-item.selected {
   background: var(--bg-highlight);
 }
 
-.bulletin-item.selected .item-title {
+.menu-item.selected .item-label {
   color: var(--phosphor-bright);
   text-shadow: 0 0 8px var(--phosphor-glow);
 }
@@ -266,22 +267,35 @@ body {
   text-align: right;
 }
 
-.item-date {
-  color: var(--phosphor-dim);
-  flex-shrink: 0;
-  width: 10ch;
-}
-
-.item-title {
+.item-label {
   color: var(--phosphor);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.item-label.disabled {
+  color: var(--phosphor-dim);
+}
+
+.item-note {
+  color: var(--phosphor-dim);
+  letter-spacing: 0.03em;
 }
 
 .item-marker {
   color: var(--phosphor-bright);
   flex-shrink: 0;
   width: 2ch;
+}
+
+.terminal-footer {
+  color: var(--phosphor-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.terminal-footer .subtitle {
+  letter-spacing: 0.08em;
 }
 
 /* === DOCUMENT VIEW === */
