@@ -115,6 +115,19 @@ LANDSCAPE ORIENTATION</pre>
 
   setTimeout(printLine, 500);
   } // end runBoot
+
+  // Scale terminal to fit viewport
+  function fitToScreen() {
+    var el = document.querySelector('.crt-housing');
+    el.style.transform = '';
+    var rect = el.getBoundingClientRect();
+    var sx = window.innerWidth / rect.width;
+    var sy = window.innerHeight / rect.height;
+    var s = Math.min(1, sx, sy) * 0.95;
+    el.style.transform = 'scale(' + s + ')';
+  }
+  fitToScreen();
+  window.addEventListener('resize', fitToScreen);
 })();
 </script>
 </body>
