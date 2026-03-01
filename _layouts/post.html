@@ -30,15 +30,13 @@ layout: default
   </div>
 
   <div class="status-bar">
-    <div class="status-bar-inner">
       <span class="keys">
         <kbd>↑↓</kbd> SCROLL
         {% if page.previous %}  <kbd>P</kbd> PREV{% endif %}
         {% if page.next %}  <kbd>N</kbd> NEXT{% endif %}
           <kbd>Q</kbd> BACK
       </span>
-      <span>{{ post_index }}/{{ post_total }}<span class="cursor"></span></span>
-    </div>
+    <span>{{ post_index }}/{{ post_total }}<span class="cursor"></span></span>
   </div>
 </div>
 
