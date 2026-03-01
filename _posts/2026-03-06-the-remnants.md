@@ -1,13 +1,9 @@
 ---
 layout: post
-title: "Day 31: Radio Contact"
+title: "Radio Contact"
 date: 2026-03-06
+log_date: "2051.02.14"
 categories: archive
----
-
-**RECOVERED DOCUMENT — UNCLASSIFIED**
-*Origin: Same field station.*
-
 ---
 
 We've been picking up signals.

@@ -1,13 +1,9 @@
 ---
 layout: post
-title: "Day 3: The Threshold"
+title: "The Threshold"
 date: 2026-03-03
+log_date: "2051.01.17"
 categories: archive
----
-
-**RECOVERED DOCUMENT — UNCLASSIFIED**
-*Origin: Same field station. Continuation of Day 1 log.*
-
 ---
 
 Liao has a theory about the threshold.

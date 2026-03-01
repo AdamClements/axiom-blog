@@ -7,5 +7,5 @@ menu_items:
   - label: "Request Field Reference"
     url: "/requisition/"
   - label: "Download Control Software"
-    disabled: true
+    url: "/download/"
 ---

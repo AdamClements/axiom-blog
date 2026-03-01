@@ -8,6 +8,10 @@
   <link rel="stylesheet" href="{{ '/assets/css/crt.css' | relative_url }}">
 </head>
 <body>
+  <div class="rotate-msg">
+    <pre>ROTATE TERMINAL TO
+LANDSCAPE ORIENTATION</pre>
+  </div>
   <div class="crt-housing">
     <div class="crt" id="boot-screen" style="display:none;">
       <div class="crt-glass"></div>
@@ -29,12 +33,23 @@
   var bootScreen = document.getElementById('boot-screen');
   var mainScreen = document.getElementById('main-screen');
 
-  if (booted) {
-    mainScreen.style.display = '';
-    return;
+  function start() {
+    if (booted) {
+      mainScreen.style.display = '';
+      return;
+    }
+    bootScreen.style.display = '';
+    runBoot();
   }
 
-  bootScreen.style.display = '';
+  // Wait for VT323 so ch units are correct before showing anything
+  if (document.fonts && document.fonts.load) {
+    document.fonts.load('20px VT323').then(start).catch(start);
+  } else {
+    start();
+  }
+
+  function runBoot() {
   var bootLog = document.getElementById('boot-log');
 
   var bootLines = [
@@ -94,6 +109,7 @@
   }
 
   setTimeout(printLine, 500);
+  } // end runBoot
 })();
 </script>
 </body>

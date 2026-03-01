@@ -15,26 +15,16 @@ layout: default
 <div class="crt" id="terminal">
   <div class="crt-glass"></div>
   <div class="screen">
-    <div class="screen-content">
-      <pre class="terminal-pre" id="terminal-header">
-               TABULA RASA
- Axiom Systems Field Terminal v2.04
-────────────────────────────────────────
- {{ page.title | upcase }}
- {{ page.date | date: "%Y.%m.%d" }} — DOCUMENT {{ post_index }}/{{ post_total }}
-────────────────────────────────────────</pre>
-      <div class="doc-scroll" id="doc-scroll">
-        <pre class="terminal-pre" id="doc-body"></pre>
-      </div>
+    <div class="screen-content doc-scroll" id="doc-scroll">
+      <pre class="terminal-pre" id="doc-body"></pre>
     </div>
   </div>
 
   <div class="status-bar">
       <span class="keys">
-        <kbd>↑↓</kbd> SCROLL
-        {% if page.previous %}  <kbd>P</kbd> PREV{% endif %}
-        {% if page.next %}  <kbd>N</kbd> NEXT{% endif %}
-          <kbd>Q</kbd> BACK
+        {% if page.previous %}<span class="tap-target" data-nav="prev"><kbd>P</kbd> PREV</span>  {% endif %}
+        {% if page.next %}<span class="tap-target" data-nav="next"><kbd>N</kbd> NEXT</span>  {% endif %}
+        <span class="tap-target" data-nav="back"><kbd>Q</kbd> BACK</span>
       </span>
     <span>{{ post_index }}/{{ post_total }}<span class="cursor"></span></span>
   </div>
@@ -42,12 +32,23 @@ layout: default
 
 <script>
 (function() {
-  // Extract text content from rendered markdown
   var raw = document.getElementById('raw-content');
   var body = document.getElementById('doc-body');
-  var scroll = document.getElementById('doc-scroll');
+  var screen = document.querySelector('.screen');
 
-  // Walk the HTML and convert to plain text with line wrapping
+  var COLS = 58;
+  var title = '{{ page.title | upcase }}';
+  var logDate = '{{ page.log_date }}';
+
+  // Build header: title left, date right on one line
+  var pad = COLS - title.length - logDate.length;
+  var headerLine = (pad > 0)
+    ? title + Array(pad + 1).join(' ') + logDate
+    : title + '\n' + Array(COLS - logDate.length + 1).join(' ') + logDate;
+  var rule = '──────────────────────────────────────';
+  var header = headerLine + '\n' + rule + '\n';
+
+  // Walk the HTML and convert to plain text
   function htmlToText(el) {
     var result = '';
     for (var i = 0; i < el.childNodes.length; i++) {
@@ -61,7 +62,7 @@ layout: default
         } else if (tag === 'BR') {
           result += '\n';
         } else if (tag === 'HR') {
-          result += '────────────────────────────────────────\n';
+          result += rule + '\n';
         } else if (tag === 'UL' || tag === 'OL') {
           for (var j = 0; j < node.children.length; j++) {
             result += ' - ' + htmlToText(node.children[j]).trim() + '\n';
@@ -83,16 +84,19 @@ layout: default
   }
 
   var text = htmlToText(raw).trim();
-  // Word wrap at 38 chars (40 minus 2 for margin)
+  // Collapse double blank lines to single
+  text = text.replace(/\n{3,}/g, '\n\n');
+
+  // Word wrap
   var wrapped = [];
   text.split('\n').forEach(function(line) {
-    if (line.length <= 38) {
+    if (line.length <= COLS) {
       wrapped.push(line);
     } else {
       var words = line.split(' ');
       var current = '';
       words.forEach(function(word) {
-        if (current.length + word.length + 1 > 38) {
+        if (current.length + word.length + 1 > COLS) {
           wrapped.push(current);
           current = word;
         } else {
@@ -102,20 +106,32 @@ layout: default
       if (current) wrapped.push(current);
     }
   });
-  body.textContent = wrapped.join('\n');
 
-  // Scrolling
-  var scrollPos = 0;
+  var footer = '\n' + rule + '\n RECOVERED DOCUMENT — UNCLASSIFIED';
+  body.textContent = header + wrapped.join('\n') + footer;
+
+  // Scrolling — native overflow for touch, keyboard uses scrollTop
+  var scroll = document.getElementById('doc-scroll');
   var lineHeight = parseFloat(getComputedStyle(body).lineHeight) || 30;
 
-  function getMaxScroll() {
-    return Math.max(0, body.scrollHeight - scroll.clientHeight);
+  function doScroll(delta) {
+    scroll.scrollTop += delta;
   }
 
-  function doScroll(delta) {
-    scrollPos = Math.max(0, Math.min(getMaxScroll(), scrollPos + delta));
-    body.style.transform = 'translateY(-' + scrollPos + 'px)';
-  }
+  // Tap nav in status bar
+  document.querySelectorAll('.tap-target').forEach(function(el) {
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', function() {
+      var nav = el.getAttribute('data-nav');
+      if (nav === 'prev') {
+        {% if page.previous %}window.location.href = '{{ page.previous.url | relative_url }}';{% endif %}
+      } else if (nav === 'next') {
+        {% if page.next %}window.location.href = '{{ page.next.url | relative_url }}';{% endif %}
+      } else if (nav === 'back') {
+        window.location.href = '{{ "/bulletins/" | relative_url }}';
+      }
+    });
+  });
 
   document.addEventListener('keydown', function(e) {
     switch(e.key) {
@@ -132,11 +148,11 @@ layout: default
       case ' ':
       case 'PageDown':
         e.preventDefault();
-        doScroll(scroll.clientHeight - lineHeight);
+        doScroll(screen.clientHeight - lineHeight);
         break;
       case 'PageUp':
         e.preventDefault();
-        doScroll(-(scroll.clientHeight - lineHeight));
+        doScroll(-(screen.clientHeight - lineHeight));
         break;
       case 'n':
       case 'N':

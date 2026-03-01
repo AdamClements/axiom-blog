@@ -1,13 +1,9 @@
 ---
 layout: post
-title: "Day 19: First Boot"
+title: "First Boot"
 date: 2026-03-05
+log_date: "2051.02.02"
 categories: archive
----
-
-**RECOVERED DOCUMENT — UNCLASSIFIED**
-*Origin: Same field station.*
-
 ---
 
 We got one running.

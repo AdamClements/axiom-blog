@@ -7,18 +7,15 @@ layout: default
   <div class="screen">
     <div class="screen-content">
       <pre class="terminal-pre" id="terminal-text">
-               TABULA RASA
- Axiom Systems Field Terminal v2.04
-────────────────────────────────────────
-
  BULLETIN BOARD
+──────────────────────────────────────
 {% assign sorted_posts = site.posts | sort: 'date' %}{% for post in sorted_posts %}{% if forloop.first %}&gt;{% else %} {% endif %} {{ post.title }}
 {% endfor %}</pre>
     </div>
   </div>
 
   <div class="status-bar">
-    <span class="keys"><kbd>↑↓</kbd> SELECT   <kbd>ENTER</kbd> OPEN   <kbd>Q</kbd> BACK</span>
+    <span class="keys"><kbd>↑↓</kbd> SELECT   <kbd>ENTER</kbd> OPEN   <span class="tap-target" data-nav="back"><kbd>Q</kbd> BACK</span></span>
     <span><span class="cursor"></span></span>
   </div>
 </div>
@@ -26,8 +23,6 @@ layout: default
 <script>
 (function() {
   var pre = document.getElementById('terminal-text');
-  var lines = pre.textContent.split('\n');
-  var menuStart = -1;
   var menuItems = [];
 
   {% assign sorted_posts = site.posts | sort: 'date' %}
@@ -35,23 +30,19 @@ layout: default
   menuItems.push({ label: '{{ post.title }}', url: '{{ post.url | relative_url }}' });
   {% endfor %}
 
-  var allLines = lines.slice();
-  for (var i = 0; i < allLines.length; i++) {
-    if (allLines[i].match(/^[> ] /)) {
-      if (menuStart < 0) menuStart = i;
-    }
-  }
-
   var selected = 0;
 
   function render() {
+    var out = ' BULLETIN BOARD\n';
+    out += '──────────────────────────────────────\n';
     for (var i = 0; i < menuItems.length; i++) {
-      var lineIdx = menuStart + i;
       var marker = (i === selected) ? '>' : ' ';
-      lines[lineIdx] = marker + ' ' + menuItems[i].label;
+      out += marker + ' ' + menuItems[i].label + '\n';
     }
-    pre.textContent = lines.join('\n');
+    pre.textContent = out;
   }
+
+  render();
 
   function select(i) {
     if (i < 0 || i >= menuItems.length) return;
@@ -87,5 +78,27 @@ layout: default
         break;
     }
   });
+
+  // Touch: tap menu item to open
+  var headerLines = 2; // title, rule
+  pre.addEventListener('click', function(e) {
+    var lineHeight = parseFloat(getComputedStyle(pre).lineHeight);
+    var rect = pre.getBoundingClientRect();
+    var y = e.clientY - rect.top;
+    var line = Math.floor(y / lineHeight) - headerLines;
+    if (line >= 0 && line < menuItems.length) {
+      selected = line;
+      render();
+      open();
+    }
+  });
+
+  // Tap nav in status bar
+  var backBtn = document.querySelector('[data-nav="back"]');
+  if (backBtn) {
+    backBtn.addEventListener('click', function() {
+      window.location.href = '/';
+    });
+  }
 })();
 </script>

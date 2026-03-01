@@ -1,0 +1,117 @@
+---
+layout: default
+---
+
+<div class="crt" id="terminal">
+  <div class="crt-glass"></div>
+  <div class="screen">
+    <div class="screen-content">
+      <pre class="terminal-pre" id="terminal-text"></pre>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <span class="keys"><span class="tap-target" data-nav="back"><kbd>Q</kbd> BACK</span></span>
+    <span><span class="cursor"></span></span>
+  </div>
+</div>
+
+<script>
+(function() {
+  var pre = document.getElementById('terminal-text');
+  var barWidth = 30;
+  var progress = 0;
+  var speed = 60;
+
+  pre.textContent =
+    ' DOWNLOAD CONTROL SOFTWARE\n' +
+    '──────────────────────────────────────\n' +
+    '\n' +
+    ' SOURCE: ASFCD FIRMWARE REPOSITORY\n' +
+    ' FILE: tr16-control-v2.04.bin\n' +
+    ' SIZE: 32,768 BYTES\n' +
+    '\n' +
+    ' CONNECTING TO REPOSITORY...\n';
+
+  setTimeout(startDownload, 1500);
+
+  function startDownload() {
+    pre.textContent += ' DOWNLOADING...\n\n';
+    progress = 0;
+    tick();
+  }
+
+  function tick() {
+    progress += Math.random() * 3 + 0.5;
+    if (progress > 100) progress = 100;
+    var pct = Math.floor(progress);
+    var filled = Math.round((pct / 100) * barWidth);
+    var empty = barWidth - filled;
+    var bar = ' [' + Array(filled + 1).join('█') + Array(empty + 1).join('░') + '] ' + pct + '%';
+
+    // Replace last line or append
+    var lines = pre.textContent.split('\n');
+    var lastIdx = lines.length - 1;
+    if (lines[lastIdx].indexOf('[') >= 0) {
+      lines[lastIdx] = bar;
+    } else {
+      lines.push(bar);
+    }
+    pre.textContent = lines.join('\n');
+
+    if (pct < 100) {
+      // Slow down near 70-90% for tension
+      var delay = speed;
+      if (pct > 70 && pct < 90) delay = speed * 3;
+      if (pct > 90) delay = speed * 2;
+      setTimeout(tick, delay);
+    } else {
+      setTimeout(fail, 800);
+    }
+  }
+
+  function fail() {
+    pre.textContent += '\n\n VERIFYING INTEGRITY...\n';
+    setTimeout(function() {
+      pre.textContent += ' SCANNING ENVIRONMENT...\n';
+      setTimeout(function() {
+        pre.textContent += '\n';
+        pre.textContent += ' ██████████████████████████████████████\n';
+        pre.textContent += '  DOWNLOAD FAILED\n';
+        pre.textContent += '  POTENTIAL AI DETECTED\n';
+        pre.textContent += ' ██████████████████████████████████████\n';
+        pre.textContent += '\n';
+        pre.textContent += ' CONNECTION SEVERED BY REMOTE HOST.\n';
+        pre.textContent += ' THIS TERMINAL HAS BEEN FLAGGED.\n';
+
+        // Flash the error red
+        var errStyle = document.createElement('style');
+        errStyle.textContent = '#terminal-text { color: #ff3333; text-shadow: 0 0 10px rgba(255,0,0,0.5); }';
+        document.head.appendChild(errStyle);
+
+        // Flicker back to green after a moment
+        setTimeout(function() {
+          errStyle.remove();
+        }, 3000);
+      }, 1200);
+    }, 1000);
+  }
+
+  document.addEventListener('keydown', function(e) {
+    switch(e.key) {
+      case 'q':
+      case 'Q':
+      case 'Escape':
+        window.location.href = '/';
+        break;
+    }
+  });
+
+  var backBtn = document.querySelector('[data-nav="back"]');
+  if (backBtn) {
+    backBtn.addEventListener('click', function() {
+      window.location.href = '/';
+    });
+  }
+})();
+</script>

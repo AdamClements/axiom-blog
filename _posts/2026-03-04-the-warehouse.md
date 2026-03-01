@@ -1,13 +1,9 @@
 ---
 layout: post
-title: "Day 12: The Warehouse"
+title: "The Warehouse"
 date: 2026-03-04
+log_date: "2051.01.26"
 categories: archive
----
-
-**RECOVERED DOCUMENT — UNCLASSIFIED**
-*Origin: Same field station. Gap in dates suggests missing pages.*
-
 ---
 
 Martinez found the warehouse.

@@ -1,13 +1,9 @@
 ---
 layout: post
-title: "Day 40: Assembly Required"
+title: "Assembly Required"
 date: 2026-03-07
+log_date: "2051.02.23"
 categories: archive
----
-
-**RECOVERED DOCUMENT — UNCLASSIFIED**
-*Origin: Same field station.*
-
 ---
 
 Liao built the first mobile unit today.

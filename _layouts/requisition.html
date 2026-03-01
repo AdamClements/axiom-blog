@@ -6,47 +6,52 @@ layout: default
   <div class="crt-glass"></div>
   <div class="screen">
     <div class="screen-content">
-      <div class="terminal-header">
-        TABULA RASA
-        <div class="subtitle">Axiom Systems Field Communications Terminal v2.04</div>
-      </div>
-
-      <div class="terminal-divider">────────────────────────────────────────────────────────────────────────────────</div>
-
-      <div style="color: var(--amber); letter-spacing: 0.15em; margin-bottom: 0.8rem;">SUPPLY REQUISITION — FIELD REFERENCE MANUAL</div>
-
-      <div class="doc-body">
-        <p><strong>ITEM:</strong> Axiom Systems TR-16 Field Reference</p>
-        <p><strong>FORMAT:</strong> Printed hardcopy — ring-bound, 80pp</p>
-        <p><strong>CLASSIFICATION:</strong> FIELD UNITS ONLY — NO DIGITAL DISTRIBUTION</p>
-
-        <hr>
-
-        <p>The TR-16 Field Reference contains complete hardware specifications, instruction set documentation, device port maps, memory layout diagrams, and example firmware for all Axiom Systems, Griffin Defence, and Ironhorse Industries components.</p>
-
-        <p>Physical copies are produced at Axiom Systems Sector 7 printing facility and dispatched to field coordinates via supply convoy.</p>
-
-        <p style="color: var(--amber);">SUPPLY REQUISITION SYSTEM COMING ONLINE.</p>
-        <p style="color: var(--amber);">ENTER YOUR FIELD COORDINATES WHEN PROMPTED.</p>
-
-        <hr>
-
-        <p>STATUS: <strong>AWAITING SUPPLY LINE ESTABLISHMENT</strong></p>
-        <p style="color: var(--phosphor-dim);">Check back at next scheduled bulletin for availability.</p>
-      </div>
+      <pre class="terminal-pre" id="terminal-text"></pre>
     </div>
   </div>
 
   <div class="status-bar">
-    <div class="status-bar-inner">
-      <span class="keys"><kbd>Q</kbd> BACK</span>
-      <span>STANDBY<span class="cursor"></span></span>
-    </div>
+    <span class="keys"><span class="tap-target" data-nav="back"><kbd>Q</kbd> BACK</span></span>
+    <span><span class="cursor"></span></span>
   </div>
 </div>
 
 <script>
 (function() {
+  var pre = document.getElementById('terminal-text');
+
+  pre.textContent =
+    ' SUPPLY REQUISITION\n' +
+    '──────────────────────────────────────\n' +
+    '\n' +
+    ' ITEM: TR-16 Field Reference\n' +
+    '       Operator\'s Manual\n' +
+    ' FORMAT: Printed hardcopy, ring-bound\n' +
+    ' CLASS: FIELD UNITS ONLY\n' +
+    '        NO DIGITAL DISTRIBUTION\n' +
+    '\n' +
+    '──────────────────────────────────────\n' +
+    '\n' +
+    ' TO REQUEST A COPY:\n' +
+    '\n' +
+    ' Send 20 credits and a return\n' +
+    ' address to:\n' +
+    '\n' +
+    '   AXIOM SYSTEMS — FIELD SUPPLY\n' +
+    '   PO BOX 1016\n' +
+    '   SECTOR 7 DISTRIBUTION CENTER\n' +
+    '\n' +
+    ' Allow 4-6 weeks for supply convoy\n' +
+    ' delivery. Include unit designation\n' +
+    ' and current field coordinates.\n' +
+    '\n' +
+    '──────────────────────────────────────\n' +
+    '\n' +
+    ' NOTE: Do not transmit manual\n' +
+    ' contents over any digital channel.\n' +
+    ' Remnant AI intercept capabilities\n' +
+    ' are unknown. Physical copies only.\n';
+
   document.addEventListener('keydown', function(e) {
     switch(e.key) {
       case 'q':
@@ -56,5 +61,12 @@ layout: default
         break;
     }
   });
+
+  var backBtn = document.querySelector('[data-nav="back"]');
+  if (backBtn) {
+    backBtn.addEventListener('click', function() {
+      window.location.href = '/';
+    });
+  }
 })();
 </script>

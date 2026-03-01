@@ -7,10 +7,9 @@ layout: default
   <div class="screen">
     <div class="screen-content">
       <pre class="terminal-pre" id="terminal-text">
-0123456789012345678901234567890123456789
-               TABULA RASA
+                         TABULA RASA
  Axiom Systems Field Terminal v2.04
-────────────────────────────────────────
+──────────────────────────────────────
 {% for item in page.menu_items %}{% if forloop.first %}&gt;{% else %} {% endif %} {{ item.label }}
 {% endfor %}</pre>
     </div>
@@ -25,33 +24,26 @@ layout: default
 <script>
 (function() {
   var pre = document.getElementById('terminal-text');
-  var lines = pre.textContent.split('\n');
-  var menuStart = -1;
   var menuItems = [];
 
-  // Find menu item lines (start with > or have label text after 2 chars indent)
   {% for item in page.menu_items %}
   menuItems.push({ label: '{{ item.label }}', url: '{{ item.url }}', disabled: {{ item.disabled | default: false }} });
   {% endfor %}
 
-  // Find first menu line index
-  var allLines = lines.slice();
-  for (var i = 0; i < allLines.length; i++) {
-    if (allLines[i].match(/^[> ] /)) {
-      if (menuStart < 0) menuStart = i;
-    }
-  }
-
   var selected = 0;
 
   function render() {
+    var out = '                         TABULA RASA\n';
+    out += ' Axiom Systems Field Terminal v2.04\n';
+    out += '──────────────────────────────────────\n';
     for (var i = 0; i < menuItems.length; i++) {
-      var lineIdx = menuStart + i;
       var marker = (i === selected) ? '>' : ' ';
-      lines[lineIdx] = marker + ' ' + menuItems[i].label;
+      out += marker + ' ' + menuItems[i].label + '\n';
     }
-    pre.textContent = lines.join('\n');
+    pre.textContent = out;
   }
+
+  render();
 
   function select(i) {
     if (i < 0 || i >= menuItems.length) return;
@@ -81,6 +73,20 @@ layout: default
         e.preventDefault();
         open();
         break;
+    }
+  });
+
+  // Touch: tap menu item to open
+  var headerLines = 3; // title, subtitle, rule
+  pre.addEventListener('click', function(e) {
+    var lineHeight = parseFloat(getComputedStyle(pre).lineHeight);
+    var rect = pre.getBoundingClientRect();
+    var y = e.clientY - rect.top;
+    var line = Math.floor(y / lineHeight) - headerLines;
+    if (line >= 0 && line < menuItems.length) {
+      selected = line;
+      render();
+      if (!menuItems[selected].disabled) open();
     }
   });
 })();
