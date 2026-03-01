@@ -359,6 +359,15 @@ body {
   margin: 1em 0;
 }
 
+/* === BOOT LOG === */
+
+.boot-log {
+  color: var(--phosphor);
+  font-family: inherit;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
 /* === CURSOR BLINK === */
 
 @keyframes blink {

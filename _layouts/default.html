@@ -9,7 +9,118 @@
 </head>
 <body>
   <div class="crt-housing">
-    {{ content }}
+    <div class="crt" id="boot-screen">
+      <div class="crt-glass"></div>
+      <div class="screen">
+        <div class="screen-content">
+          <pre class="boot-log" id="boot-log"></pre>
+        </div>
+      </div>
+    </div>
+
+    <div id="main-screen" style="display:none;">
+      {{ content }}
+    </div>
   </div>
+
+<script>
+(function() {
+  var bootLog = document.getElementById('boot-log');
+  var bootScreen = document.getElementById('boot-screen');
+  var mainScreen = document.getElementById('main-screen');
+
+  var bootLines = [
+    { text: 'AXIOM SYSTEMS TR-16 FIELD TERMINAL', delay: 0 },
+    { text: 'ROM v2.04 — 64K RAM OK', delay: 400 },
+    { text: '', delay: 200 },
+    { text: 'SCANNING FREQUENCIES...', delay: 600 },
+    { text: 'CHANNEL 7 .... CARRIER DETECTED', delay: 900 },
+    { text: 'BAUD 2400 N-8-1', delay: 300 },
+    { text: '', delay: 200 },
+    { text: 'CONNECTING TO ASFCD BULLETIN SYSTEM', delay: 500 },
+    { text: '....', delay: 800, typeSpeed: 200 },
+    { text: 'CONNECTED.', delay: 400 },
+    { text: '', delay: 300 },
+  ];
+
+  var lineIndex = 0;
+
+  function typeText(text, element, speed, callback) {
+    var i = 0;
+    function next() {
+      if (i < text.length) {
+        element.textContent += text[i];
+        i++;
+        setTimeout(next, speed);
+      } else {
+        callback();
+      }
+    }
+    next();
+  }
+
+  function printLine() {
+    if (lineIndex >= bootLines.length) {
+      finishBoot();
+      return;
+    }
+
+    var line = bootLines[lineIndex];
+    lineIndex++;
+
+    if (line.typeSpeed) {
+      typeText(line.text, bootLog, line.typeSpeed, function() {
+        bootLog.textContent += '\n';
+        setTimeout(printLine, line.delay);
+      });
+    } else {
+      bootLog.textContent += line.text + '\n';
+      setTimeout(printLine, line.delay);
+    }
+  }
+
+  function finishBoot() {
+    bootScreen.style.display = 'none';
+    mainScreen.style.display = '';
+    revealContent();
+  }
+
+  function revealContent() {
+    var content = mainScreen.querySelector('.screen-content');
+    if (!content) return;
+
+    var walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
+    var textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+    var allChars = [];
+    textNodes.forEach(function(node) {
+      var text = node.textContent;
+      node.textContent = '';
+      for (var i = 0; i < text.length; i++) {
+        allChars.push({ node: node, char: text[i] });
+      }
+    });
+
+    var idx = 0;
+    var charsPerTick = 3;
+    var tickMs = 10;
+
+    function tick() {
+      var end = Math.min(idx + charsPerTick, allChars.length);
+      for (var i = idx; i < end; i++) {
+        allChars[i].node.textContent += allChars[i].char;
+      }
+      idx = end;
+      if (idx < allChars.length) {
+        setTimeout(tick, tickMs);
+      }
+    }
+    tick();
+  }
+
+  setTimeout(printLine, 500);
+})();
+</script>
 </body>
 </html>
