@@ -22,7 +22,7 @@ layout: default
   var menuItems = [];
 
   {% for item in page.menu_items %}
-  menuItems.push({ label: '{{ item.label }}', url: '{{ item.url }}', disabled: {{ item.disabled | default: false }} });
+  menuItems.push({ label: '{{ item.label | replace: "'", "\\'" }}', url: '{{ item.url }}', disabled: {{ item.disabled | default: false }} });
   {% endfor %}
 
   var selected = 0;

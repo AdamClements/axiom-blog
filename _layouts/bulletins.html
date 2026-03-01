@@ -27,7 +27,7 @@ layout: default
 
   {% assign sorted_posts = site.posts | sort: 'date' %}
   {% for post in sorted_posts %}
-  menuItems.push({ label: '{{ post.title }}', url: '{{ post.url | relative_url }}' });
+  menuItems.push({ label: '{{ post.title | replace: "'", "\\'" }}', url: '{{ post.url | relative_url }}' });
   {% endfor %}
 
   var selected = 0;
