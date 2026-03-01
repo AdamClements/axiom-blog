@@ -96,6 +96,7 @@ body {
 .crt-housing {
   position: absolute;
   overflow: hidden;
+  /* JS sets matrix3d transform to match monitor perspective */
 }
 
 /* Boot screen and main screen wrappers must fill the housing */

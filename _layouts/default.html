@@ -44,23 +44,60 @@ LANDSCAPE ORIENTATION</pre>
   var mainScreen = document.getElementById('main-screen');
 
   // Scene layout: map CRT onto monitor in the background photo
-  var IMG_W = 1536, IMG_H = 1024; // bg.png native dimensions
+  var IMG_W = 870, IMG_H = 600; // bg.png native dimensions (cropped)
   var frame = document.querySelector('.scene-frame');
   var housing = document.querySelector('.crt-housing');
 
-  // Monitor screen bounds — inset slightly from alpha polygon in bg.png
-  // so the bezel always overlaps the terminal edges
-  var SCREEN_L = 0.140;
-  var SCREEN_T = 0.355;
-  var SCREEN_W = 0.188;
-  var SCREEN_H = 0.315;
+  // Monitor screen corners (image coords, calibrated)
+  var CORNERS = {
+    tl: [308.92, 249.02],
+    tr: [475.78, 240.53],
+    br: [484.62, 361.51],
+    bl: [318.43, 381.22]
+  };
+
+  // matrix3d helper: maps a rectangle to an arbitrary quadrilateral
+  function computeMatrix3d(w, h, tl, tr, br, bl) {
+    var s = [[0,0],[w,0],[w,h],[0,h]];
+    var d = [tl, tr, br, bl];
+    function adj(m) {
+      return [m[4]*m[8]-m[5]*m[7],m[2]*m[7]-m[1]*m[8],m[1]*m[5]-m[2]*m[4],
+              m[5]*m[6]-m[3]*m[8],m[0]*m[8]-m[2]*m[6],m[2]*m[3]-m[0]*m[5],
+              m[3]*m[7]-m[4]*m[6],m[1]*m[6]-m[0]*m[7],m[0]*m[4]-m[1]*m[3]];
+    }
+    function mm(a, b) {
+      var c = [];
+      for (var i = 0; i < 3; i++)
+        for (var j = 0; j < 3; j++)
+          c[i*3+j] = a[i*3]*b[j] + a[i*3+1]*b[3+j] + a[i*3+2]*b[6+j];
+      return c;
+    }
+    function mv(m, v) {
+      return [m[0]*v[0]+m[1]*v[1]+m[2]*v[2],
+              m[3]*v[0]+m[4]*v[1]+m[5]*v[2],
+              m[6]*v[0]+m[7]*v[1]+m[8]*v[2]];
+    }
+    function basis(p0, p1, p2, p3) {
+      var m = [p0[0],p1[0],p2[0], p0[1],p1[1],p2[1], 1,1,1];
+      var v = mv(adj(m), [p3[0], p3[1], 1]);
+      return mm(m, [v[0],0,0, 0,v[1],0, 0,0,v[2]]);
+    }
+    var A = basis(s[0],s[1],s[2],s[3]);
+    var B = basis(d[0],d[1],d[2],d[3]);
+    var T = mm(B, adj(A));
+    for (var i = 0; i < 9; i++) T[i] /= T[8];
+    return 'matrix3d(' +
+      T[0]+','+T[3]+',0,'+T[6]+','+
+      T[1]+','+T[4]+',0,'+T[7]+','+
+      '0,0,1,0,'+
+      T[2]+','+T[5]+',0,'+T[8]+')';
+  }
 
   function layoutScene() {
     var vw = window.innerWidth, vh = window.innerHeight;
     var sx = vw / IMG_W, sy = vh / IMG_H;
-    var s = Math.max(sx, sy); // cover
+    var s = Math.max(sx, sy);
     var fw = IMG_W * s, fh = IMG_H * s;
-    // Center the overflow (same as object-fit:cover centering)
     var fl = (vw - fw) / 2;
     var ft = (vh - fh) / 2;
     frame.style.width = fw + 'px';
@@ -68,15 +105,36 @@ LANDSCAPE ORIENTATION</pre>
     frame.style.left = fl + 'px';
     frame.style.top = ft + 'px';
 
-    // Position CRT housing over the monitor screen
-    housing.style.left = (fl + fw * SCREEN_L) + 'px';
-    housing.style.top = (ft + fh * SCREEN_T) + 'px';
-    housing.style.width = (fw * SCREEN_W) + 'px';
-    housing.style.height = (fh * SCREEN_H) + 'px';
+    // Convert image-space corners to viewport coords
+    function i2v(c) { return [fl + (c[0]/IMG_W)*fw, ft + (c[1]/IMG_H)*fh]; }
+    var vp = { tl: i2v(CORNERS.tl), tr: i2v(CORNERS.tr),
+               br: i2v(CORNERS.br), bl: i2v(CORNERS.bl) };
 
-    // Scale font so ~58 chars fit the screen width
-    var screenW = fw * SCREEN_W * 0.9;
-    var fs = Math.max(8, Math.floor(screenW / 36));
+    // Bounding box of the 4 corners
+    var minX = Math.min(vp.tl[0], vp.bl[0]);
+    var minY = Math.min(vp.tl[1], vp.tr[1]);
+    var maxX = Math.max(vp.tr[0], vp.br[0]);
+    var maxY = Math.max(vp.bl[1], vp.br[1]);
+    var boxW = maxX - minX, boxH = maxY - minY;
+
+    housing.style.left = minX + 'px';
+    housing.style.top = minY + 'px';
+    housing.style.width = boxW + 'px';
+    housing.style.height = boxH + 'px';
+
+    // Compute matrix3d to warp the rectangle to the quadrilateral
+    var rel = {
+      tl: [vp.tl[0]-minX, vp.tl[1]-minY],
+      tr: [vp.tr[0]-minX, vp.tr[1]-minY],
+      br: [vp.br[0]-minX, vp.br[1]-minY],
+      bl: [vp.bl[0]-minX, vp.bl[1]-minY]
+    };
+    housing.style.transformOrigin = '0 0';
+    housing.style.transform = computeMatrix3d(boxW, boxH, rel.tl, rel.tr, rel.br, rel.bl);
+
+    // Scale font so ~30 chars fit the screen width
+    var screenW = boxW * 0.9;
+    var fs = Math.max(8, Math.floor(screenW / 18));
     document.documentElement.style.setProperty('--term-font-size', fs + 'px');
   }
 
@@ -101,14 +159,14 @@ LANDSCAPE ORIENTATION</pre>
   var bootLog = document.getElementById('boot-log');
 
   var bootLines = [
-    { text: 'AXIOM SYSTEMS TR-16 FIELD TERMINAL', delay: 0 },
-    { text: 'ROM v2.04 — 64K RAM OK', delay: 400 },
+    { text: 'AXIOM TR-16 FIELD TERMINAL', delay: 0 },
+    { text: 'ROM v2.04 — 64K OK', delay: 400 },
     { text: '', delay: 200 },
     { text: 'SCANNING FREQUENCIES...', delay: 600 },
-    { text: 'CHANNEL 7 .... CARRIER DETECTED', delay: 900 },
+    { text: 'CH7 .... CARRIER FOUND', delay: 900 },
     { text: 'BAUD 2400 N-8-1', delay: 300 },
     { text: '', delay: 200 },
-    { text: 'CONNECTING TO AXIOM SYSTEMS', delay: 500 },
+    { text: 'CONNECTING...', delay: 500 },
     { text: '....', delay: 800, typeSpeed: 200 },
     { text: 'CONNECTED.', delay: 400 },
     { text: '', delay: 300 },
@@ -161,6 +219,37 @@ LANDSCAPE ORIENTATION</pre>
 
   layoutScene();
   window.addEventListener('resize', layoutScene);
+
+  // SPA navigation: fetch pages via AJAX and swap screen content
+  // to avoid reloading the background image
+  window.navigateTo = function(url) {
+    fetch(url)
+      .then(function(r) { return r.text(); })
+      .then(function(html) {
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(html, 'text/html');
+        var newContent = doc.getElementById('main-screen');
+        if (newContent) {
+          mainScreen.innerHTML = newContent.innerHTML;
+          mainScreen.style.display = '';
+          // Execute scripts in the new content
+          var scripts = mainScreen.querySelectorAll('script');
+          scripts.forEach(function(old) {
+            var s = document.createElement('script');
+            s.textContent = old.textContent;
+            old.parentNode.replaceChild(s, old);
+          });
+          history.pushState(null, '', url);
+        } else {
+          window.location.href = url;
+        }
+      })
+      .catch(function() { window.location.href = url; });
+  };
+
+  window.addEventListener('popstate', function() {
+    window.navigateTo(location.pathname);
+  });
 })();
 </script>
 </body>

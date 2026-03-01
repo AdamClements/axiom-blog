@@ -35,13 +35,13 @@ layout: default
 
   function render() {
     var h = '<span style="' + dim + '">';
-    h += '──────────────────────────────────────\n';
+    h += '────────────────────────────\n';
     h += '</span>';
     h += '<span style="' + bright + '">';
-    h += '                         TABULA RASA\n';
+    h += '            TABULA RASA\n';
     h += '</span>';
     h += '<span style="' + dim + '">';
-    h += '──────────────────────────────────────\n';
+    h += '────────────────────────────\n';
     h += '</span>';
     for (var i = 0; i < menuItems.length; i++) {
       var marker = (i === selected) ? '&gt;' : ' ';
@@ -64,7 +64,7 @@ layout: default
   function open() {
     if (menuItems[selected].disabled) return;
     var url = menuItems[selected].url;
-    if (url) window.location.href = url;
+    if (url) navigateTo(url);
   }
 
   document.addEventListener('keydown', function(e) {

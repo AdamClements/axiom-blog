@@ -19,8 +19,8 @@ layout: default
 <script>
 (function() {
   var pre = document.getElementById('terminal-text');
-  var ROWS = 14;
-  var barWidth = 30;
+  var ROWS = 9;
+  var barWidth = 18;
   var speed = 60;
   var state = 'input';
   var inputCode = '';
@@ -42,10 +42,10 @@ layout: default
 
   // Prompt at top
   setLine(0, ' AXIOM FIRMWARE REPOSITORY');
-  setLine(1, ' FILE: tr16-control-v2.04.bin');
+  setLine(1, ' tr16-control-v2.04.bin');
   setLine(2, '');
-  setLine(3, ' Enter the verification code from');
-  setLine(4, ' page 3 of your printed manual.');
+  setLine(3, ' Enter verification code');
+  setLine(4, ' from your printed manual.');
   setLine(5, '');
   setLine(6, ' CODE: █');
   render();
@@ -58,20 +58,15 @@ layout: default
   function startDownload() {
     state = 'downloading';
     setLine(6, ' CODE: ' + inputCode);
-    setLine(7, ' VALIDATING AGAINST REGISTRY...');
+    setLine(7, ' VALIDATING...');
     render();
 
     setTimeout(function() {
-      setLine(7, ' CODE ACCEPTED.');
-      setLine(8, ' CONNECTING...');
+      setLine(7, ' DOWNLOADING...');
+      setLine(8, '');
       render();
-      setTimeout(function() {
-        setLine(8, ' CONNECTED. DOWNLOADING...');
-        setLine(9, '');
-        render();
-        var progress = 0;
-        tick(progress);
-      }, 1000);
+      var progress = 0;
+      tick(progress);
     }, 1500);
   }
 
@@ -81,7 +76,7 @@ layout: default
     var pct = Math.floor(progress);
     var filled = Math.round((pct / 100) * barWidth);
     var empty = barWidth - filled;
-    setLine(10, ' [' + Array(filled + 1).join('█') + Array(empty + 1).join('░') + '] ' + pct + '%');
+    setLine(8, ' [' + Array(filled + 1).join('█') + Array(empty + 1).join('░') + '] ' + pct + '%');
     render();
 
     if (pct < 100) {
@@ -90,31 +85,22 @@ layout: default
       if (pct > 90) delay = speed * 2;
       setTimeout(function() { tick(progress); }, delay);
     } else {
-      setTimeout(verify, 800);
+      setTimeout(fail, 800);
     }
-  }
-
-  function verify() {
-    setLine(12, ' VERIFYING INTEGRITY...');
-    render();
-    setTimeout(function() {
-      setLine(13, ' SCANNING ENVIRONMENT...');
-      render();
-      setTimeout(fail, 1200);
-    }, 1000);
   }
 
   function fail() {
     state = 'done';
     clearLines();
-    setLine(1, ' ██████████████████████████████████████');
-    setLine(3, '         DOWNLOAD FAILED');
-    setLine(4, '       POTENTIAL AI DETECTED');
-    setLine(6, ' ██████████████████████████████████████');
-    setLine(8, ' NO MANUALS DISTRIBUTED TO THIS');
-    setLine(9, ' SECTOR. CODE ORIGIN UNVERIFIABLE.');
-    setLine(11, ' CONNECTION SEVERED BY REMOTE HOST.');
-    setLine(12, ' THIS TERMINAL HAS BEEN FLAGGED.');
+    setLine(0, ' ██████████████████████████');
+    setLine(1, '   DOWNLOAD FAILED');
+    setLine(2, '  POTENTIAL AI DETECTED');
+    setLine(3, ' ██████████████████████████');
+    setLine(4, '');
+    setLine(5, ' NO MANUALS DISTRIBUTED');
+    setLine(6, ' TO THIS SECTOR.');
+    setLine(7, '');
+    setLine(8, ' TERMINAL FLAGGED.');
     render();
 
     pre.style.color = '#ff3333';
@@ -127,11 +113,11 @@ layout: default
 
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
-      window.location.href = '/';
+      navigateTo('/');
       return;
     }
     if (e.key === 'q' || e.key === 'Q') {
-      window.location.href = '/';
+      navigateTo('/');
       return;
     }
 
@@ -154,7 +140,7 @@ layout: default
   var backBtn = document.querySelector('[data-nav="back"]');
   if (backBtn) {
     backBtn.addEventListener('click', function() {
-      window.location.href = '/';
+      navigateTo('/');
     });
   }
 })();

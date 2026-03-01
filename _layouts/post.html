@@ -36,7 +36,7 @@ layout: default
   var body = document.getElementById('doc-body');
   var screen = document.querySelector('.screen');
 
-  var COLS = 58;
+  var COLS = 28;
   var title = '{{ page.title | upcase }}';
   var logDate = '{{ page.log_date }}';
 
@@ -45,7 +45,7 @@ layout: default
   var headerLine = (pad > 0)
     ? title + Array(pad + 1).join(' ') + logDate
     : title + '\n' + Array(COLS - logDate.length + 1).join(' ') + logDate;
-  var rule = '──────────────────────────────────────';
+  var rule = '────────────────────────────';
   var header = headerLine + '\n' + rule + '\n';
 
   // Walk the HTML and convert to plain text
@@ -124,11 +124,11 @@ layout: default
     el.addEventListener('click', function() {
       var nav = el.getAttribute('data-nav');
       if (nav === 'prev') {
-        {% if page.previous %}window.location.href = '{{ page.previous.url | relative_url }}';{% endif %}
+        {% if page.previous %}navigateTo('{{ page.previous.url | relative_url }}');{% endif %}
       } else if (nav === 'next') {
-        {% if page.next %}window.location.href = '{{ page.next.url | relative_url }}';{% endif %}
+        {% if page.next %}navigateTo('{{ page.next.url | relative_url }}');{% endif %}
       } else if (nav === 'back') {
-        window.location.href = '{{ "/bulletins/" | relative_url }}';
+        navigateTo('{{ "/bulletins/" | relative_url }}');
       }
     });
   });
@@ -157,29 +157,29 @@ layout: default
       case 'n':
       case 'N':
         {% if page.next %}
-        window.location.href = '{{ page.next.url | relative_url }}';
+        navigateTo('{{ page.next.url | relative_url }}');
         {% endif %}
         break;
       case 'p':
       case 'P':
         {% if page.previous %}
-        window.location.href = '{{ page.previous.url | relative_url }}';
+        navigateTo('{{ page.previous.url | relative_url }}');
         {% endif %}
         break;
       case 'ArrowRight':
         {% if page.next %}
-        window.location.href = '{{ page.next.url | relative_url }}';
+        navigateTo('{{ page.next.url | relative_url }}');
         {% endif %}
         break;
       case 'ArrowLeft':
         {% if page.previous %}
-        window.location.href = '{{ page.previous.url | relative_url }}';
+        navigateTo('{{ page.previous.url | relative_url }}');
         {% endif %}
         break;
       case 'q':
       case 'Q':
       case 'Escape':
-        window.location.href = '{{ "/bulletins/" | relative_url }}';
+        navigateTo('{{ "/bulletins/" | relative_url }}');
         break;
     }
   });

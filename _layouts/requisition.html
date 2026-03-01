@@ -25,15 +25,15 @@ layout: default
 
   pre.textContent =
     ' REQUEST OPERATOR\'S MANUAL\n' +
-    '──────────────────────────────────────\n' +
-    ' Print the requisition form and\n' +
-    ' send it with 20 credits to the\n' +
-    ' address on the form.\n' +
+    '────────────────────────────\n' +
+    ' Print the requisition form\n' +
+    ' and send it with 20 credits\n' +
+    ' to the address on the form.\n' +
     '\n' +
-    ' Allow 4-6 weeks for delivery.\n' +
+    ' Allow 4-6 weeks delivery.\n' +
     ' Physical copies only.\n' +
     '\n' +
-    ' Press P to print requisition form.';
+    ' Press P to print form.';
 
   function printForm() {
     window.open('{{ "/assets/requisition-form.pdf" | relative_url }}', '_blank');
@@ -49,7 +49,7 @@ layout: default
       case 'q':
       case 'Q':
       case 'Escape':
-        window.location.href = '/';
+        navigateTo('/');
         break;
     }
   });
@@ -58,7 +58,7 @@ layout: default
     el.addEventListener('click', function() {
       var nav = el.getAttribute('data-nav');
       if (nav === 'print') printForm();
-      if (nav === 'back') window.location.href = '/';
+      if (nav === 'back') navigateTo('/');
     });
   });
 })();
