@@ -161,7 +161,7 @@ LANDSCAPE ORIENTATION</pre>
     housing.style.transform = computeMatrix3d(boxW, boxH, rel.tl, rel.tr, rel.br, rel.bl);
 
     var screenW = boxW * 0.9;
-    var fs = fontForCols(screenW, TARGET_COLS);
+    var fs = Math.max(8, Math.floor(screenW / 18));
     document.documentElement.style.setProperty('--term-font-size', fs + 'px');
   }
 
