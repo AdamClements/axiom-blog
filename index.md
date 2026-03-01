@@ -2,10 +2,10 @@
 layout: menu
 title: Tabula Rasa
 menu_items:
-  - label: "Bulletin Board"
+  - label: "Transmissions"
     url: "/bulletins/"
-  - label: "Request Field Reference"
+  - label: "Request Operator's Manual"
     url: "/requisition/"
-  - label: "Download Control Software"
+  - label: "Download Software"
     url: "/download/"
 ---
