@@ -2,19 +2,12 @@
 layout: menu
 title: Tabula Rasa
 menu_items:
-  - label: "BULLETIN BOARD"
+  - label: "Bulletin Board"
     url: "/bulletins/"
-    note: "7 documents available"
-  - label: "REQUEST FIELD REFERENCE"
+  - label: "Request Field Reference"
     url: "/requisition/"
-    note: "physical copy — requires supply credits"
-  - label: "DOWNLOAD CONTROL SOFTWARE"
+  - label: "Download Control Software"
     disabled: true
-    note: "awaiting clearance"
 ---
 
-Welcome, field engineer.
-
-This terminal is a public access node maintained by the Axiom Systems Field Communications Division. Select an option below.
-
-Do not attempt to operate TR-16 equipment without the field reference. Do not trust digital copies.
+Welcome, field engineer. Select an option.

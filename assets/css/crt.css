@@ -245,14 +245,7 @@ body {
 }
 
 .menu-item {
-  padding: 0.3rem 0;
-  display: flex;
-  gap: 1rem;
-  align-items: baseline;
-}
-
-.menu-item.selected {
-  background: var(--bg-highlight);
+  padding: 0.15rem 0;
 }
 
 .menu-item.selected .item-label {
@@ -260,42 +253,16 @@ body {
   text-shadow: 0 0 8px var(--phosphor-glow);
 }
 
-.item-index {
-  color: var(--amber);
-  flex-shrink: 0;
-  width: 3ch;
-  text-align: right;
-}
-
 .item-label {
   color: var(--phosphor);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .item-label.disabled {
   color: var(--phosphor-dim);
 }
 
-.item-note {
-  color: var(--phosphor-dim);
-  letter-spacing: 0.03em;
-}
-
 .item-marker {
   color: var(--phosphor-bright);
-  flex-shrink: 0;
-  width: 2ch;
-}
-
-.terminal-footer {
-  color: var(--phosphor-dim);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.terminal-footer .subtitle {
-  letter-spacing: 0.08em;
 }
 
 /* === DOCUMENT VIEW === */

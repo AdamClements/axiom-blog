@@ -11,36 +11,25 @@ layout: default
         <div class="subtitle">Axiom Systems Field Communications Terminal v2.04</div>
       </div>
 
-      <div class="terminal-divider">────────────────────────────────────────────────────────────────────────────────</div>
+      <div class="terminal-divider">────────────────────────────────────────────────────────</div>
 
       {{ content }}
-
-      <div class="terminal-divider">────────────────────────────────────────────────────────────────────────────────</div>
 
       <ul class="menu-list" id="menu-list">
         {% for item in page.menu_items %}
         <li class="menu-item{% if forloop.first %} selected{% endif %}" data-url="{{ item.url }}" data-disabled="{{ item.disabled }}">
           <span class="item-marker">{% if forloop.first %}&gt;{% else %} {% endif %}</span>
-          <span class="item-index">{{ forloop.index }}.</span>
           <span class="item-label{% if item.disabled %} disabled{% endif %}">{{ item.label }}</span>
-          {% if item.note %}<span class="item-note">{{ item.note }}</span>{% endif %}
         </li>
         {% endfor %}
       </ul>
-
-      <div class="terminal-divider">────────────────────────────────────────────────────────────────────────────────</div>
-
-      <div class="terminal-footer">
-        AXIOM SYSTEMS FIELD COMMUNICATIONS DIVISION
-        <div class="subtitle">REPORT HARDWARE FAULTS TO YOUR SECTOR QUARTERMASTER</div>
-      </div>
     </div>
   </div>
 
   <div class="status-bar">
     <div class="status-bar-inner">
       <span class="keys"><kbd>↑↓</kbd> SELECT   <kbd>ENTER</kbd> OPEN</span>
-      <span>READY<span class="cursor"></span></span>
+      <span><span class="cursor"></span></span>
     </div>
   </div>
 </div>
@@ -82,12 +71,6 @@ layout: default
         e.preventDefault();
         open();
         break;
-    }
-    var num = parseInt(e.key);
-    if (num >= 1 && num <= items.length) {
-      e.preventDefault();
-      select(num - 1);
-      open();
     }
   });
 })();

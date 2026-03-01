@@ -11,16 +11,15 @@ layout: default
         <div class="subtitle">Axiom Systems Field Communications Terminal v2.04</div>
       </div>
 
-      <div class="terminal-divider">────────────────────────────────────────────────────────────────────────────────</div>
+      <div class="terminal-divider">────────────────────────────────────────────────────────</div>
 
-      <div style="color: var(--amber); letter-spacing: 0.15em; margin-bottom: 0.8rem;">BULLETIN BOARD — RECOVERED FIELD DOCUMENTS</div>
+      <div style="color: var(--amber); margin-bottom: 0.8rem;">BULLETIN BOARD</div>
 
       <ul class="menu-list" id="bulletin-list">
         {% assign sorted_posts = site.posts | sort: 'date' %}
         {% for post in sorted_posts %}
-        <li class="menu-item{% if forloop.first %} selected{% endif %}" data-url="{{ post.url | relative_url }}" data-index="{{ forloop.index }}">
+        <li class="menu-item{% if forloop.first %} selected{% endif %}" data-url="{{ post.url | relative_url }}">
           <span class="item-marker">{% if forloop.first %}&gt;{% else %} {% endif %}</span>
-          <span class="item-index">{{ forloop.index }}.</span>
           <span class="item-label">{{ post.title }}</span>
         </li>
         {% endfor %}
@@ -31,7 +30,7 @@ layout: default
   <div class="status-bar">
     <div class="status-bar-inner">
       <span class="keys"><kbd>↑↓</kbd> SELECT   <kbd>ENTER</kbd> OPEN   <kbd>Q</kbd> BACK</span>
-      <span>{{ site.posts | size }} DOCUMENTS<span class="cursor"></span></span>
+      <span><span class="cursor"></span></span>
     </div>
   </div>
 </div>
@@ -76,12 +75,6 @@ layout: default
       case 'Escape':
         window.location.href = '/';
         break;
-    }
-    var num = parseInt(e.key);
-    if (num >= 1 && num <= items.length) {
-      e.preventDefault();
-      select(num - 1);
-      open();
     }
   });
 })();
